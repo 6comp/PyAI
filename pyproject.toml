@@ -1,8 +1,8 @@
 [project]
 name = "PyAI"
 version = "1.0.0"
-require-python = ['>=3.12', '3.11']
-dependencies = ['requests','requests-cache']
+require-python = '>3.9'
+dependencies = ['requests','requests-cache', 'python-dotenv','edge-tts']
 readme = 'README.md'
 
 
@@ -11,14 +11,4 @@ name = '6tft6'
 
 # 构建依赖 bulid dependtions
 [bulid-system]
-requires = ['requests','requests-cahce']
-
-
-# 主配置 main config
-[config]
-db_path = '.\data\'
-
-# 日志配置 log config
-[config.log]
-level = 'INFO'
-path = '.\log\'
+requires = ['requests','requests-cahce','python-dotenv','edge-tts']
