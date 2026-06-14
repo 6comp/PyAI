@@ -114,7 +114,7 @@ class Api:
 
 
     @ timeout(15)
-    def _request(self, payload:str) -> str|None:
+    def _request(self, payload:str) -> dict|None:
         """
         发送请求，返回 ai 的回答
         :param payload: 发送数据
@@ -140,11 +140,7 @@ class Api:
                     self.logger.error(f'AI answer error {js['finish']}')
                     return None
 
-                ai_answer:str = js['message']['content']
-                self.payload['messages'].append(js['message'])          # 添加到聊天记录
-                self.logger.debug(ai_answer)
-
-                return ai_answer
+                return js['message']
 
             else:
                 self.logger.error('Requested failed')
@@ -172,17 +168,22 @@ class Api:
         self.payload['messages'].append({'content':say, 'role':'user'})
         pd = json.dumps(self.payload)
 
-        return self._request(pd)
+        result = self._request(pd)
+        if result:
+            self.payload['messages'].append(result)
+            return result['content']
+        return None
 
 
 
     @ timeout(15)
-    def analysis_dialog(self, **dialog:list[tuple[str,str]]) -> str:
+    def analysis_dialog(self, *dialogs:tuple[str,str]) -> str|None:
         """
         分析对话内容
-        :param dialog: 对话内容
+        :param dialogs: 对话内容。示例：('a','111 兄弟可有碎银几两'),('b','滚蛋！')
         :return: str
         """
+
         setting = '''
         你是一个智能聊天分析助手，只能返回分析结果
         格式：json
@@ -197,11 +198,18 @@ class Api:
         }
         ```
         注：
-            1. 对话者的相关信息可以有很多，比如年龄、爱好、等等，你可以自行添加
+            1. 对话者的相关信息可以有很多，比如年龄、爱好、等等。你可以自行添加，没有的无需添加
             2. "正在进行的对话" 这个 json id 从我上传的对话内容中提取
             3. 我有时会返回你曾生成的分析记录，你可以根据旧内容来进行进一步分析
         ** 必须以标准 json 格式返回 **
         '''
-        msg = [{'role':'system','content':setting}]
+        self.payload['messages'] = [{'role':'system','content':setting},
+                                    {'role':'user', 'content':'\n'.join([':'.join(dialog) for dialog in dialogs])}]
+        self.logger.debug(self.payload)
+        pd = json.dumps(self.payload)
 
-        ''
+        answer = self._request(pd)
+        if answer:
+            return answer['content']
+
+        return None

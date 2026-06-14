@@ -4,6 +4,6 @@
 
   "log": {
     "dir": "log\\",
-    "format": "%(asctime)s - {%(name)s} - %(funcName)s - %(lineno)d - [%(levelname)s] - %(message)s  |  %(processName)s : %(process)d | %(threadName)s : %(thread)d | %(taskName)s  |"
+    "format": "%(asctime)s - %(funcName)s - %(lineno)d - [%(levelname)s] - %(message)s  |  %(processName)s : %(process)d | %(threadName)s : %(thread)d | %(taskName)s  |"
   }
 }
