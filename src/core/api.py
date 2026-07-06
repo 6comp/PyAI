@@ -6,15 +6,15 @@
 """
 
 # 模块导入
-import re
 import time
 import requests
 import json
-import requests_cache
+import typing
 
-__all__= {
-    'Api'
-}
+__all__= [
+    'Api',
+    'init'
+]
 
 
 
@@ -23,14 +23,15 @@ global logger
 def init(get_logger) -> None:
     """
     初始化模块
-    :param get_logger: log 模块的 get_logger 方法
+    :param get_logger: 获取日志记录器的调用方法
     :return: None
     """
     global logger
     logger = get_logger(__name__)
 
 
-def timeout(times:int) -> type|object:
+
+def timeout(times:int) -> typing.Callable:
     """
     超时重试
     :param times: 重试次数
@@ -66,18 +67,20 @@ class Api:
     """
     API 访问方法封装
     """
-    def __init__(self, msg:list, api:str, max_token:int=1024) -> None:
+    def __init__(self, ai_setting:str, msg:list, api_key:str, max_token:int=1024) -> None:
         """
         init
         :param msg: 过去对话记录
-        :param api: API 秘钥
+        :param api_key: API 秘钥
         :param max_token: 最大生成 token 数
         """
 
         self.logger = logger                                            # 日志记录器
 
         self.url = 'https://api.deepseek.com/chat/completions'          # api 地址
-        self.messages = msg                                             # 聊天记录和设定
+        setting = ai_setting                                            # ai 设定
+        msg.insert(0, setting)                                    # 聊天记录
+        self.messages = msg
 
         # 请求字典
         self.payload:dict = {
@@ -104,13 +107,14 @@ class Api:
         self.headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': f'Bearer {api}'
+            'Authorization': f'Bearer {api_key}'
         }
 
-        self.logger.debug(api)
+        self.logger.debug(api_key)
         self.logger.debug(max_token)
         self.logger.debug(msg)
         self.logger.info('"api.py" module init complete')
+
 
 
     @ timeout(15)
@@ -124,7 +128,7 @@ class Api:
 
         try:
             # 请求
-            response = requests.post(self.url, data=payload, headers=self.headers)
+            response = requests.post(self.url, data=payload, headers=self.headers, timeout=15)
             response.encoding = 'UTF-8'
             self.logger.debug(response.status_code)
             self.logger.debug(response.headers)
@@ -137,16 +141,13 @@ class Api:
                 js = json.loads(response.text)['choices'][0]
 
                 if js['finish_reason'] != 'stop':                       # 判断模型生成是否正常
-                    self.logger.error(f'AI answer error {js['finish']}')
+                    self.logger.error(f'AI answer error {js['finish_reason']}')
                     return None
 
                 return js['message']
 
             else:
                 self.logger.error('Requested failed')
-
-        except requests.exceptions.BaseHTTPError as e:
-            self.logger.error(e)
 
         except requests.exceptions.HTTPError as e:
             self.logger.error(e)
@@ -155,6 +156,7 @@ class Api:
             self.logger.error(e, exc_info=True)
 
         return None
+
 
 
     def chat(self, say:str) -> str|None:
@@ -176,11 +178,10 @@ class Api:
 
 
 
-    @ timeout(15)
-    def analysis_dialog(self, *dialogs:tuple[str,str]) -> str|None:
+    def analysis_dialog(self, *dialogs:tuple[str,str, str]) -> str|None:
         """
         分析对话内容
-        :param dialogs: 对话内容。示例：('a','111 兄弟可有碎银几两'),('b','滚蛋！')
+        :param dialogs: 对话内容。示例：('a','111 兄弟可有碎银几两', '2026.1.1'),('b','滚蛋！', '2026.1.1')
         :return: str
         """
 
@@ -204,11 +205,13 @@ class Api:
         ** 必须以标准 json 格式返回 **
         '''
         self.payload['messages'] = [{'role':'system','content':setting},
-                                    {'role':'user', 'content':'\n'.join([':'.join(dialog) for dialog in dialogs])}]
+                                    {'role':'user', 'content':'\n'.join(['|'.join(dialog) for dialog in dialogs])}]
         self.logger.debug(self.payload)
         pd = json.dumps(self.payload)
 
         answer = self._request(pd)
+        self.payload['messages'] = self.messages
+
         if answer:
             return answer['content']
 

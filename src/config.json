@@ -1,9 +1,62 @@
 {
   "name":"PyAI",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "authors": ["6tft6","6comp"],
+
 
   "log": {
     "dir": "log\\",
     "format": "%(asctime)s - %(funcName)s - %(lineno)d - [%(levelname)s] - %(message)s  |  %(processName)s : %(process)d | %(threadName)s : %(thread)d | %(taskName)s  |"
-  }
+  },
+
+
+  "db_config": {
+
+    "path": {
+      "dialog": "data\\dialogs.db",
+      "system": "data\\system.db",
+      "settings": "data\\settings.db"
+      }
+
+    },
+
+
+    "voice_config": {
+
+      "cache_path": "data\\cache.wav",
+
+      "voice": {
+
+        "zh-cn": [
+          "zh-CN-XiaoxiaoNeural",
+          "zh-CN-XiaoyiNeural",
+          "zh-CN-YunjianNeural",
+          "zh-CN-YunxiNeural",
+          "zh-CN-YunxiaNeural",
+          "zh-CN-XiaohanNeural",
+          "zh-CN-XiaomengNeural",
+          "zh-CN-XiaomoNeural",
+          "zh-CN-XiaoranNeural",
+          "zh-CN-XiaoruiNeural",
+          "zh-CN-XiaoshuangNeural",
+          "zh-CN-XiaoxuanNeural",
+          "zh-CN-XiaoyouNeural",
+          "zh-CN-YunyangNeural",
+          "zh-CN-YunyeNeural",
+          "zh-CN-YunzeNeural"
+        ],
+        "en": [
+          "en-US-AriaNeural",
+          "en-US-JennyNeural",
+          "en-US-GuyNeural",
+          "en-GB-SoniaNeural",
+          "en-GB-RyanNeural",
+          "en-AU-NatashaNeural"
+        ]
+
+      }
+
+    }
+
+
 }

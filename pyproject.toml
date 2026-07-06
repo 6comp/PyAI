@@ -1,14 +1,15 @@
 [project]
 name = "PyAI"
-version = "1.0.0"
-require-python = '>3.9'
-dependencies = ['requests','requests-cache', 'python-dotenv','edge-tts']
+version = "0.1.0"
+require-python = '>3.12'
+dependencies = ['requests','python-dotenv','edge-tts']
 readme = 'README.md'
 
 
-[auther]
-name = '6tft6'
+[authors]
+name = ['6tft6','6comp']
 
 # 构建依赖 bulid dependtions
 [bulid-system]
-requires = ['requests','requests-cahce','python-dotenv','edge-tts']
+require-python = '>3.12'
+requires = ['requests','python-dotenv','edge-tts']

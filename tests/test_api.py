@@ -19,7 +19,7 @@ dotenv.load_dotenv('.env.local')
 @ pytest.fixture
 def logger():
     def _return(name):
-        logger = logging.getLogger()
+        logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
         logger.addHandler(logging.StreamHandler())
         return logger
@@ -41,4 +41,4 @@ def test_api_chat(api_self):
 
 
 def test_api_analysis_dialog(api_self):
-    assert api_self.analysis_dialog(('借钱王','111 兄弟可有碎银几两'),('铜钱捞石','滚滚滚！')) is not None
+    assert api_self.analysis_dialog(('借钱王','111 兄弟可有碎银几两', '2026.1.1'),('铜钱捞石','滚滚滚！', '2026.1.1')) is not None

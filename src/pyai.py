@@ -1,8 +1,8 @@
 # coding=UTF-8
 
 """
-auther: 6tft6
-version: 1.0.0
+authors: 6tft6, 6comp
+version: 0.1.0
 Only learn and not allowed to commercial use.
 """
 

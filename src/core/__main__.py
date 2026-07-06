@@ -5,6 +5,6 @@ python -m src\core
 """
 
 
-from .__init__ import *
+from . import main
 
 main()

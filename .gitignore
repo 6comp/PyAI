@@ -3,3 +3,5 @@
 *.env.local
 *log
 /src/log/
+/.codebuddy/
+/src/data/

@@ -1,0 +1,5 @@
+en-US-AriaNeural	Aria    Female voice
+en-US-JennyNeural	Jenny   Female voice
+en-US-GuyNeural	    Guy     Male voice
+en-GB-SoniaNeural	Sonia   Female voice
+en-GB-RyanNeural	Ryan    Male voice
