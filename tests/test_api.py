@@ -21,7 +21,11 @@ def logger():
     def _return(name):
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
-        logger.addHandler(logging.StreamHandler())
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s - {%(lineno)d}')
+        stream = logging.StreamHandler()
+        stream.setLevel(logging.DEBUG)
+        stream.setFormatter(formatter)
+        logger.addHandler(stream)
         return logger
     return _return
 
@@ -32,8 +36,9 @@ def api_self(logger):
     if test_key is None:
         raise Exception("API key not set")
     api.init(logger)
-    test_msg = [{'content':'你是一个 ai 智能助手', 'role':'system'}]
-    return api.Api(test_msg, test_key)
+    test_msg = []
+    test_setting = '你是一个幽默的 AI 助手，善于帮助用户解答疑问'
+    return api.Api(test_setting, test_msg, test_key)
 
 
 def test_api_chat(api_self):

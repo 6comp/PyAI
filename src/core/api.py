@@ -78,7 +78,7 @@ class Api:
         self.logger = logger                                            # 日志记录器
 
         self.url = 'https://api.deepseek.com/chat/completions'          # api 地址
-        setting = ai_setting                                            # ai 设定
+        setting = {'content':ai_setting, 'role':'system'}               # ai 设定
         msg.insert(0, setting)                                    # 聊天记录
         self.messages = msg
 

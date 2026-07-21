@@ -27,16 +27,21 @@ class PyAI:
         log_config = config['log']
 
     # 文件夹创建
-    for folder in ('log','data'):
-        os.mkdir(folder)
+    if not all((
+             os.path.exists('log'),
+             os.path.exists('data')
+             )):
+        for folder in ('log','data'):
+            os.mkdir(folder)
 
 
 
     def __init__(self) -> None:
         """
-        PyAI Init
+        PyAI Initialize
         """
         self.logger = self.get_logger(__name__)
+        self.logger.debug(self.config)
 
         # 模块初始化
         api.init(self.get_logger)
@@ -44,9 +49,9 @@ class PyAI:
         voice.init(self.get_logger)
 
         # 进程初始化
-        q_p = mult.Queue(3)
+        self.q_p = mult.Queue(3)
         child_process = mult.Process(name='[PyAI]child-process',
-                                     target=self._child_process, args=(q_p,),
+                                     target=self._child_process, args=(self.q_p,),
                                      daemon=True)
         child_process.start()
 

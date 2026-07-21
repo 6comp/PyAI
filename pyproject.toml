@@ -2,7 +2,7 @@
 name = "PyAI"
 version = "0.1.0"
 require-python = '>3.12'
-dependencies = ['requests','python-dotenv','edge-tts']
+dependencies = ['requests','python-dotenv','edge-tts','keyring','cryptography']
 readme = 'README.md'
 
 
@@ -12,4 +12,4 @@ name = ['6tft6','6comp']
 # 构建依赖 bulid dependtions
 [bulid-system]
 require-python = '>3.12'
-requires = ['requests','python-dotenv','edge-tts']
+requires = ['requests','python-dotenv','edge-tts','keyring','cryptography']

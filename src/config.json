@@ -15,7 +15,7 @@
     "path": {
       "dialog": "data\\dialogs.db",
       "system": "data\\system.db",
-      "settings": "data\\settings.db"
+      "setting": "data\\settings.db"
       }
 
     },
