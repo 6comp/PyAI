@@ -4,6 +4,8 @@
   "authors": ["6tft6","6comp"],
 
 
+
+
   "log": {
     "dir": "log\\",
     "format": "%(asctime)s - %(funcName)s - %(lineno)d - [%(levelname)s] - %(message)s  |  %(processName)s : %(process)d | %(threadName)s : %(thread)d | %(taskName)s  |"
@@ -56,7 +58,118 @@
 
       }
 
+    },
+
+
+  "ui_config": {
+
+    "language":"zh-cn",
+    "text_language": {
+      "zh-cn": {},
+      "en": {}
+    },
+
+    "colors": {
+      "mode": "light",
+      "light":{
+        "home": {
+          "bg": "#FFF9F2",
+          "highlightcolor": "pink",
+          "highlightbackground": "purple",
+          "config_frame": {
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple",
+            "about_button": {
+              "bg": "#F5DDC4",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
+            },
+            "help_button": {
+              "bg": "#F5DDC4",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
+            },
+            "setting_button": {
+              "bg": "#F5DDC4",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
+            },
+            "character_setting_button": {
+              "bg": "#F5DDC4",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
+            }
+          },
+
+          "chat_frame": {
+            "bg": "#FFF0F5",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple",
+
+            "action_frame": {
+              "bg": "#FFF0F5",
+              "highlightcolor": "pink",
+              "highlightbackground": "purple",
+
+              "head_touch_button": {
+                "bg": "#E0FFFF",
+                "activebackground": "#F5FFFA",
+                "activeforeground": "white"
+              },
+
+            "hug_button": {
+                "bg": "#E0FFFF",
+                "activebackground": "#F5FFFA",
+                "activeforeground": "white"
+              }
+
+            },
+
+            "chat_text": {
+              "bg": "#FFE4E1",
+              "fg": "#E0FFFF",
+              "selectbackground": "#FFF0F5"
+            },
+            "insert_frame": {
+              "bg": "#FFF0F5",
+              "highlightcolor": "pink",
+              "highlightbackground": "purple",
+              "insert_entry": {
+                "bg": "#FFE4E1",
+                "disabledbackground": "#FFF0F5",
+                "highlightcolor": "white",
+                "highlightbackground": "#FFE4E1"
+              },
+              "send_button": {
+                "bg": "#FFE4E1",
+                "activebackground": "#F7F8FA",
+                "activeforeground": "white"
+              }
+            }
+          }
+        },
+        "about": {
+          "bg": "#FFF0F5",
+          "fg": "black",
+          "highlightcolor": "#FFF9F2",
+          "highlightbackground": "#FFF9F2",
+          "back_button": {
+            "bg": "#E0FFFF",
+            "activebackground": "#F5FFFA",
+            "activeforeground": "white"
+          }
+        },
+        "setting": {
+          "bg": "#FFF0F5",
+          "fg": "black",
+          "highlightcolor": "#FFF9F2",
+          "highlightbackground": "#FFF9F2"
+        },
+        "character_settings": {}
+      }
     }
 
+  }
 
 }
