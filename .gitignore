@@ -6,3 +6,5 @@
 /.codebuddy/
 /src/data/
 /.idea/
+/tests/__pychache__/
+/.pytest_cache/
