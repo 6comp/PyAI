@@ -21,10 +21,12 @@ def get_self():
 
     def test_function(*args, **kwargs):
         print(args, kwargs)
+        return 1234567890
     cmds = {
-        'home':{
-            'chat':test_function
-        }
+        'chat':test_function,
+        'get_api':test_function,
+        'set_api':test_function,
+        'get_setting':test_function
     }
     self = ui.Ui(**cmds)
     return self

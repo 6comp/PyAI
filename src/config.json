@@ -113,15 +113,15 @@
               "highlightbackground": "purple",
 
               "head_touch_button": {
-                "bg": "#E0FFFF",
-                "activebackground": "#F5FFFA",
+                "bg": "#FFE4E1",
+                "activebackground": "#F7F8FA",
                 "activeforeground": "white"
               },
 
             "hug_button": {
-                "bg": "#E0FFFF",
-                "activebackground": "#F5FFFA",
-                "activeforeground": "white"
+              "bg": "#FFE4E1",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
               }
 
             },
@@ -150,23 +150,99 @@
           }
         },
         "about": {
-          "bg": "#FFF0F5",
-          "fg": "black",
-          "highlightcolor": "#FFF9F2",
-          "highlightbackground": "#FFF9F2",
+          "bg": "#FFF9F2",
+          "highlightcolor": "pink",
+          "highlightbackground": "purple",
+          "text_label": {
+            "fg": "#FFF9F2",
+            "bg": "#FFF0F5",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+          },
           "back_button": {
-            "bg": "#E0FFFF",
-            "activebackground": "#F5FFFA",
+            "bg": "#FFF0F5",
+            "activebackground": "#F7F8FA",
             "activeforeground": "white"
           }
         },
         "setting": {
-          "bg": "#FFF0F5",
-          "fg": "black",
-          "highlightcolor": "#FFF9F2",
-          "highlightbackground": "#FFF9F2"
+          "bg": "#FFF9F2",
+          "highlightcolor": "pink",
+          "highlightbackground": "purple",
+          "back_button": {
+            "bg": "#FFF0F5",
+            "activebackground": "#F7F8FA",
+            "activeforeground": "white"
+          },
+          "api_label": {
+            "fg": "black",
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+          },
+          "api_entry": {
+            "bg": "#FFF0F5",
+            "highlightcolor": "white",
+            "highlightbackground": "#FFE4E1"
+          },
+          "mode_label": {
+            "fg": "black",
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+          },
+          "mode_radiobutton": {
+            "bg": "#FFF9F2"
+          }
         },
-        "character_settings": {}
+        "character_settings": {
+          "bg": "#FFF9F2",
+          "highlightcolor": "pink",
+          "highlightbackground": "purple",
+          "back_button": {
+            "bg": "#FFF0F5",
+            "activebackground": "#F7F8FA",
+            "activeforeground": "white"
+            },
+          "name_label": {
+              "fg": "black",
+              "bg": "#FFF9F2",
+              "highlightcolor": "pink",
+              "highlightbackground": "purple"
+            },
+          "name_entry": {
+              "bg": "#FFF0F5",
+              "highlightcolor": "white",
+              "highlightbackground": "#FFE4E1"
+            },
+          "gender_label": {
+            "fg": "black",
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+            },
+          "gender_radiobutton": {
+            "bg": "#FFF9F2"
+            },
+          "voice_label": {
+            "fg": "black",
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+            },
+          "voice_combobox": {
+            "bg": "#FFF9F2"
+          },
+          "introduction_label": {
+            "fg": "black",
+            "bg": "#FFF9F2",
+            "highlightcolor": "pink",
+            "highlightbackground": "purple"
+          },
+            "insertor_text": {
+              "bg": "#FFF9F2"
+          }
+        }
       }
     }
 
