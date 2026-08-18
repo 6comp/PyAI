@@ -5,6 +5,7 @@
 /src/log/
 /.codebuddy/
 /src/data/
+/.venv/
 /.idea/
-/tests/__pychache__/
 /.pytest_cache/
+/tests/__pycache__/
