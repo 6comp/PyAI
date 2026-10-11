@@ -25,7 +25,7 @@
 
     "voice_config": {
 
-      "cache_path": "data\\cache.wav",
+      "cache_path": "data\\cache.mp3",
 
       "voice": {
 
@@ -122,14 +122,22 @@
               "bg": "#FFE4E1",
               "activebackground": "#F7F8FA",
               "activeforeground": "white"
+              },
+
+            "save_button": {
+              "bg": "#F4C2C2",
+              "activebackground": "#F7F8FA",
+              "activeforeground": "white"
               }
 
             },
 
             "chat_text": {
               "bg": "#FFE4E1",
-              "fg": "#E0FFFF",
-              "selectbackground": "#FFF0F5"
+              "fg": "black",
+              "selectbackground": "#F5FFFA",
+              "tag_ai": "#FBCEB1",
+              "tag_user": "#FFE5B4"
             },
             "insert_frame": {
               "bg": "#FFF0F5",
@@ -142,7 +150,7 @@
                 "highlightbackground": "#FFE4E1"
               },
               "send_button": {
-                "bg": "#FFE4E1",
+                "bg": "#F4C2C2",
                 "activebackground": "#F7F8FA",
                 "activeforeground": "white"
               }
@@ -154,13 +162,13 @@
           "highlightcolor": "pink",
           "highlightbackground": "purple",
           "text_label": {
-            "fg": "#FFF9F2",
-            "bg": "#FFF0F5",
+            "fg": "black",
+            "bg": "#FFF9F2",
             "highlightcolor": "pink",
             "highlightbackground": "purple"
           },
           "back_button": {
-            "bg": "#FFF0F5",
+            "bg": "#FFF9F2",
             "activebackground": "#F7F8FA",
             "activeforeground": "white"
           }
@@ -211,7 +219,7 @@
               "highlightbackground": "purple"
             },
           "name_entry": {
-              "bg": "#FFF0F5",
+              "bg": "#FFF9F2",
               "highlightcolor": "white",
               "highlightbackground": "#FFE4E1"
             },

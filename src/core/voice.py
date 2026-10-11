@@ -5,8 +5,6 @@
 """
 
 # 模块导入
-import json
-import winsound
 import edge_tts as tts
 
 __all__ = [
@@ -17,15 +15,15 @@ __all__ = [
 
 
 # 获取日志记录器
-global logger
+global voice_logger
 def init(get_logger) -> None:
     """
     初始化模块
     :param get_logger: 获取记录器的调用方法
     :return: None
     """
-    global logger
-    logger = get_logger(__name__)
+    global voice_logger
+    voice_logger = get_logger('voice')
 
 
 
@@ -34,21 +32,20 @@ class Voice:
     """
     语音合成
     """
-    with open('config.json', 'r', encoding='UTF-8') as f:
-        config = json.load(f)['voice_config']
-        cache_path = config['cache_path']
 
-
-
-    def __init__(self, voice:str, timeout:int) -> None:
+    def __init__(self, voice:str, timeout:int=15) -> None:
         """
         Initiate voice
         """
-        self.logger = logger
+
+        config = self.config['voice_config']
+        self.cache_path = config['cache_path']
+
+        self.logger = voice_logger
         self.v = voice
         self.timeout = timeout
         self.logger.debug(f'{voice}, {timeout}')
-        self.logger.info('Init voice')
+        self.logger.info('Initiate have down (voice)')
 
 
 
@@ -61,7 +58,7 @@ class Voice:
         self.logger.debug(text)
         response = tts.Communicate(text, self.v,
                                    connect_timeout=self.timeout, receive_timeout=self.timeout)
-        response.save(self.cache_path)
+        response.save_sync(self.cache_path)
         self.logger.info('Request to the TTS')
 
 
@@ -71,7 +68,6 @@ class Voice:
         播放保存的音频
         :return: None
         """
-        winsound.PlaySound(self.cache_path, winsound.SND_FILENAME)
         self.logger.info('Play the audio')
 
 

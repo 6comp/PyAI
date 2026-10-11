@@ -2,14 +2,15 @@
 
 
 
-# 导入所有模块
+# 导入所需模块
 import os
 import json
 import queue
 import logging
+import typing as tp
 import threading as th
-import multiprocessing as mult
 from . import api, datamanage, voice, ui
+
 
 __all__ = [
     'main'
@@ -17,10 +18,95 @@ __all__ = [
 
 
 
-class PyAI:
+
+class _ThreadManager:
+    """
+    线程管理器
+    """
+    #
+    # def __init__(self) -> None:
+    #     self.logger = None
+
+
+
+    def _thread_processor(self, name: str, logger: logging.Logger, q: queue.Queue) -> None:
+        """
+        可调用对象处理器
+        :param q: 队列对象
+        :return: None
+        """
+        logger.info(f'Create a child thread: {name}')
+
+        while True:
+            cmd = q.get()
+            target, args = cmd
+            target(*args)
+            logger.debug('Done')
+
+
+
+    def thread(self, queue_max: int, thread_name: str = '[PyAI]Child-Thread', daemon: bool = True) -> queue.Queue:
+        """
+        创建线程函数（或方法）处理器
+        返回一个队列对象
+        :param queue_max: 队列最大大小
+        :param thread_name: 线程名
+        :param daemon: 是否启用守护线程
+        :return: queue.Queue
+        """
+        self.logger.debug(f'QueueMaxSize: {queue_max} | ThreadName: {thread_name} | IsDaemon: {daemon}')
+
+        q = queue.Queue(queue_max)
+        t = th.Thread(name=thread_name,
+                      target=self._thread_processor,
+                      args=(thread_name, self.logger, q),
+                      daemon=daemon)
+        t.start()
+
+        self.logger.info('Create ended')
+        return q
+
+
+
+    def add_task(self, q: queue.Queue, target: tp.Callable, args: tuple) -> bool:
+        """
+        向子线程添加任务
+        :param q: 子线程的队列对象
+        :param target: 可调用对象
+        :param args: 传给可调用对象的参数
+        :return: bool
+        """
+        if not q.full():
+            q.put((target, args))
+            self.logger.debug('Completed adding task')
+        else:
+            self.logger.warning('The Queue is Full')
+            return False
+        self.logger.info('Add task ended')
+        return True
+
+
+
+
+class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
     """
     PyAI
     """
+    path = os.path
+
+    # 判断所需文件是否存在
+    file_paths = ('analysis_config',
+                  'config.json',
+                  r'img\PyAIICO.ico',
+                  r'img\PyAI-IMG(white).png',
+                  r'img\PyAI-IMG(black)(normal).png',
+                  r'img\PyAI-IMG(white)(normal).png',
+                  r'docs\HelpIndex.html')
+    is_existence = (path.isfile(p) for p in file_paths)
+    if not is_existence:
+        super().show_warn('error', '错误', '有所需文件缺失')
+        raise SystemExit('Some required file are missing!')
+
     # 加载初始化文件
     with open(r'config.json', 'r', encoding='utf-8') as f:
         config = json.load(f)
@@ -28,8 +114,8 @@ class PyAI:
 
     # 文件夹创建
     if not all((
-             os.path.exists('log'),
-             os.path.exists('data')
+             path.exists('log'),
+             path.exists('data')
              )):
         for folder in ('log','data'):
             os.mkdir(folder)
@@ -46,54 +132,15 @@ class PyAI:
         # 模块初始化
         api.init(self.get_logger)
         datamanage.init(self.get_logger)
+        ui.init(self.get_logger)
         voice.init(self.get_logger)
-
-        # 进程初始化
-        self.q_p = mult.Queue(3)
-        child_process = mult.Process(name='[PyAI]child-process',
-                                     target=self._child_process, args=(self.q_p,),
-                                     daemon=True)
-        child_process.start()
+        super(_ThreadManager, self).__init__()
+        super(datamanage.DataManager, self).__init__()
+        super(api.Api, self).__init__()
+        super(ui.Ui, self).__init__('zh-CN-XiaoyiNeural')
 
 
         self.logger.info('Init PyAI')
-
-
-
-    def _child_process(self, logger:logging.Logger, q:mult.Queue) -> None:
-        """
-        子线程，处理 I/O 的进程
-        :param q: 队列对象
-        :return: None
-        """
-        while True:
-            logger.debug('Waiting a task')
-            cmd = q.get()
-            logger.debug(cmd)
-
-            name, func, args = cmd['name'], cmd['function'], cmd['args']
-            logger.debug(':'.join((name,func,args)))
-
-            thread = th.Thread(name=name,
-                               target=func,args=args,
-                               daemon=True)
-            thread.start()
-
-            logger.info(f'{name} has started')
-
-
-
-    def _play_voice(self, logger:logging.Logger, q:queue.Queue,
-                    v:voice.Voice) -> None:
-        """
-        音频线程，接受音频播放指令
-        :param q: 队列对象
-        :return: None
-        """
-        while True:
-            text = q.get()
-            logger.info(f'say {text}')
-            v.say(text)
 
 
 
@@ -102,6 +149,7 @@ class PyAI:
         PyAI 运行
         :return: None
         """
+        ui.Ui.build_ui(self)
 
 
 
@@ -134,4 +182,5 @@ class PyAI:
 
 
 def main() -> None:
-    PyAI().PyAI()
+    app = PyAI()
+    app.PyAI()
