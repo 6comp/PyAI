@@ -324,20 +324,24 @@ class Ui:
 
             text_color = colors_frame['chat_text']
             def flush(event) -> None:
-                if event.delta < 0:
-                    top = scr_text.yview()[0]
-                    if top == 0.0:
-                        scr_text.config(state='normal')
-                        for _ in range(20):
-                            try:
-                                dialogs = next(self.get_dialogs())
-                            except StopIteration:
-                                self.ui_logger.info('No dialogs can insert')
-                                return None
-                            user, ai, date = dialogs
-                            scr_text.insert(0.0, user, 'user')
-                            scr_text.insert(1.0, '\n', r'\n')
-                            scr_text.insert(1.0, ai, 'ai')
+                if 'flush-stop' not in self.cache:
+                    self.cache['flush-stop'] = False
+                if not self.cache['flush-stop']:
+                    if event.delta < 0:
+                        top = scr_text.yview()[0]
+                        if top == 0.0:
+                            scr_text.config(state='normal')
+                            for _ in range(20):
+                                try:
+                                    dialogs = next(self.get_dialogs())
+                                except StopIteration:
+                                    self.ui_logger.info('No dialogs can insert')
+                                    self.cache['flush-stop'] = True
+                                    return None
+                                user, ai, date = dialogs
+                                scr_text.insert(0.0, user, 'user')
+                                scr_text.insert(1.0, '\n', r'\n')
+                                scr_text.insert(1.0, ai, 'ai')
                 return None
             scr_text = scrolledtext.ScrolledText(chat_frame,
                                              wrap='char',
@@ -669,254 +673,256 @@ Hoping to bring you warmth and company.
         :return: None
         """
         self.pages['home'].forget()
-        if 'character_setting' in self.pages:self.pages['character_setting'].pack(fill='both')
+        colors = self.colors['character_settings']
+        character_settings = tk.Frame(self.main_tk,
+                                      name='character_settings',
+                                      bg=colors['bg'],
+                                      highlightcolor=colors['highlightcolor'],
+                                      highlightbackground=colors['highlightbackground'],
+                                      highlightthickness=0.1)
+        character_settings.pack(fill='both')
+        self.pages['character_setting'] = character_settings
 
-        else:
-            colors = self.colors['character_settings']
-            character_settings = tk.Frame(self.main_tk,
-                                          name='character_settings',
-                                          bg=colors['bg'],
-                                          highlightcolor=colors['highlightcolor'],
-                                          highlightbackground=colors['highlightbackground'],
-                                          highlightthickness=0.1)
-            character_settings.pack(fill='both')
-            self.pages['character_setting'] = character_settings
-
-            back_color = colors['back_button']
-            def save() -> None:
-                """
-                退出时保存的钩子函数
-                :return: None
-                """
-                ai = n, g, v, i = name_e.get().replace('\n',''), gender_var.get(), voice_var.get(), text_insertor.get(0.0, 'end')
-                if all(ai):
-                    self.update_setting('voice', v)
-                    if all_info:
-                        abouts = all_info['对话者相关属性']
-                        self.ui_logger.debug(abouts)
-                        old_info = abouts[name]
-                        if n != name:
-                            self.ui_logger.debug('Update old name')
-                            del abouts[name]
-                        abouts[n] = old_info
-                        self.ui_logger.debug(abouts)
-                        abouts[n]['性别']:g
-                        abouts[n] = abouts[n]['补充'].append(i)
-                        save_info = all_info
-                    else:
-                        save_info = {"对话者相关属性":
-                                    {n:{
+        back_color = colors['back_button']
+        def save() -> None:
+            """
+            退出时保存的钩子函数
+            :return: None
+            """
+            ai = n, g, v, i = name_e.get().replace('\n',''), gender_var.get(), voice_var.get(), text_insertor.get(0.0, 'end').rstrip()
+            if all(ai):
+                if v not in voices:
+                    self.show_warn('warning', '提示', '你选择的声音模型不可使用')
+                    return None
+                self.update_setting('voice', v)
+                if all_info:
+                    abouts = all_info['对话者相关属性']
+                    self.ui_logger.debug(abouts)
+                    old_info = abouts[name]
+                    if n != name:
+                        self.ui_logger.debug('Update old name')
+                        del abouts[name]
+                    abouts[n] = old_info
+                    self.ui_logger.debug(abouts)
+                    abouts[n]['性别']=g
+                    abouts[n]['补充']=i
+                    save_info = all_info
+                else:
+                    save_info = {"对话者相关属性":{
+                                     n:{
                                         "性别":g,
                                         "补充":[i]
-                                    },
-                                     "暂时未知":{}
-                                     },
-                                "相关记忆":[],
-                                "正在进行的对话":{}
+                                        },
+                                    "暂时未知":{}
+                                                },
+                                    "相关记忆":[],
+                                    "正在进行的对话":{}
                                 }
-                    self.ui_logger.debug(save_info)
-                    self.save_info(json.dumps(save_info, ensure_ascii=False))
-                    self.add_info(save_info)
-                    self.show_warn('info', '完成', '设置完成！')
-                    return
+                self.ui_logger.debug(save_info)
+                self.save_info(json.dumps(save_info, ensure_ascii=False))
+                self.add_info(save_info)
+                self.show_warn('info', '完成', '设置完成！')
+                return None
 
-                self.show_warn('warning', '提示', '还有空余选项未填')
-                self.ui_logger.warning('Some question have not answered')
-                self.ui_logger.info('Save data about the character')
-            back_button = tk.Button(character_settings,
-                                    name='back_button',
-                                    text='返回',
-                                    activebackground=back_color['activebackground'],
-                                    activeforeground=back_color['activeforeground'],
-                                    bg=back_color['bg'],
-                                    bd=0.5,
-                                    relief='solid',
-                                    font=('微软雅黑', 10),
-                                    padx=15,
-                                    pady=2,
-                                    command=lambda :self._back(character_settings,
-                                                               self.pages['home'], pack_kwargs={'fill':'both'},
-                                                               func=save)
-                                    )
-            back_button.pack(side='top', anchor='w', pady=(20,0), padx=(18,0))
+            self.show_warn('warning', '提示', '还有空余选项未填')
+            self.ui_logger.warning('Some question have not answered')
+            self.ui_logger.info('Save data about the character')
+            return None
 
-            name,introduction,gender=('',)*3
-            if all_info:=self.get_info():
-                all_info = json.loads(all_info)
-                name = list(all_info['对话者相关属性'].keys())[0]
-                introduction = all_info['对话者相关属性'][name]
-                gender = introduction['性别']
-                del introduction['性别']
-                introduction = '\n\n'.join(f'{key}:\n{value}' for key, value in introduction)
+        back_button = tk.Button(character_settings,
+                                name='back_button',
+                                text='返回',
+                                activebackground=back_color['activebackground'],
+                                activeforeground=back_color['activeforeground'],
+                                bg=back_color['bg'],
+                                bd=0.5,
+                                relief='solid',
+                                font=('微软雅黑', 10),
+                                padx=15,
+                                pady=2,
+                                command=lambda :self._back(character_settings,
+                                                           self.pages['home'], pack_kwargs={'fill':'both'},
+                                                           func=save)
+                                )
+        back_button.pack(side='top', anchor='w', pady=(20,0), padx=(18,0))
 
-            setting_frame = tk.Frame(character_settings,
-                                     name='setting_frame_character',
-                                     #text='  伴侣配置  ',
-                                     #font=('微软雅黑',12),
-                                     bg=colors['bg'],
-                                     highlightcolor=colors['highlightcolor'],
-                                     highlightbackground=colors['highlightbackground'],
-                                     highlightthickness=0.1)
-            setting_frame.pack(fill='both', pady=20, padx=30)
+        name,introduction,gender=('',)*3
+        if all_info:=self.get_info():
+            all_info = json.loads(all_info)
+            name = list(all_info['对话者相关属性'].keys())[0]
+            introduction = all_info['对话者相关属性'][name]
+            gender = introduction['性别']
+            del introduction['性别']
+            introduction = '\n\n'.join((i_value+'\n' for i_value in introduction.values()))
 
-            name_frame = tk.Frame(setting_frame,
-                                  name='name_frame',
-                                  bg=colors['bg'])
-            name_frame.pack(fill='x', side='top',pady=(10,0))
+        setting_frame = tk.Frame(character_settings,
+                                 name='setting_frame_character',
+                                 #text='  伴侣配置  ',
+                                 #font=('微软雅黑',12),
+                                 bg=colors['bg'],
+                                 highlightcolor=colors['highlightcolor'],
+                                 highlightbackground=colors['highlightbackground'],
+                                 highlightthickness=0.1)
+        setting_frame.pack(fill='both', pady=20, padx=30)
 
-            name_l_color = colors['name_label']
-            name_l = tk.Label(name_frame,
-                              name='name_label',
-                              text='名字',
-                              font=('微软雅黑',13),
-                              bg=name_l_color['bg'],
-                              highlightcolor=name_l_color['highlightcolor'],
-                              highlightbackground=name_l_color['highlightbackground'],
+        name_frame = tk.Frame(setting_frame,
+                              name='name_frame',
+                              bg=colors['bg'])
+        name_frame.pack(fill='x', side='top',pady=(10,0))
+
+        name_l_color = colors['name_label']
+        name_l = tk.Label(name_frame,
+                          name='name_label',
+                          text='名字',
+                          font=('微软雅黑',13),
+                          bg=name_l_color['bg'],
+                          highlightcolor=name_l_color['highlightcolor'],
+                          highlightbackground=name_l_color['highlightbackground'],
+                          highlightthickness=0.1,
+                          fg=name_l_color['fg'],
+                          bd=0.5)
+        name_l.pack(side='left', anchor='n', padx=(20,0))
+
+        name_e_color = colors['name_entry']
+        name_e = tk.Entry(name_frame,
+                          bg=name_e_color['bg'],
+                          font=('微软雅黑',12),
+                          highlightcolor=name_e_color['highlightcolor'],
+                          highlightbackground=name_e_color['highlightbackground'],
+                          relief='solid',
+                          width=45)
+        name_e.pack(side='left', padx=(25,0))
+        name_e.insert(0, name)
+
+        gender_frame = tk.Frame(setting_frame,
+                                name='gender_frame',
+                                bg=colors['bg'])
+        gender_frame.pack(pady=(30,0), fill='x', side='top')
+
+        gender_l_color = colors['gender_label']
+        gender_label = tk.Label(gender_frame,
+                              name='gender_label',
+                              text='性别',
+                              font=('微软雅黑', 13),
+                              bg=gender_l_color['bg'],
+                              highlightcolor=gender_l_color['highlightcolor'],
+                              highlightbackground=gender_l_color['highlightbackground'],
                               highlightthickness=0.1,
-                              fg=name_l_color['fg'],
+                              fg=gender_l_color['fg'],
                               bd=0.5)
-            name_l.pack(side='left', anchor='n', padx=(20,0))
+        gender_label.pack(side='left', anchor='n', padx=(20,0))
 
-            name_e_color = colors['name_entry']
-            name_e = tk.Entry(name_frame,
-                              bg=name_e_color['bg'],
-                              font=('微软雅黑',12),
-                              highlightcolor=name_e_color['highlightcolor'],
-                              highlightbackground=name_e_color['highlightbackground'],
-                              relief='solid',
-                              width=45)
-            name_e.pack(side='left', padx=(25,0))
-            name_e.insert(0, name)
+        gender_color = colors['gender_radiobutton']
+        if 'gender-var' in self.cache:
+            gender_var = self.cache['gender-var']
+        else:
+            gender_var = tk.StringVar(gender_frame, gender)
+            self.cache['gender-var'] = gender_var
+        self.ttk_style('TRadiobutton',background=gender_color['bg'],font=('微软雅黑',12))
+        gender_boy = ttk.Radiobutton(gender_frame,
+                                    name='gender_boy',
+                                    # bg=gender_color['bg'],
+                                    # activebackground=gender_color['activebackground'],
+                                    # activeforeground=gender_color['activeforeground'],
+                                    text='男生',
+                                    # font=('微软雅黑', 12),
+                                    variable=gender_var,
+                                    value='boy')
+        gender_boy.pack(side='left', padx=(25, 0))
 
-            gender_frame = tk.Frame(setting_frame,
-                                    name='gender_frame',
-                                    bg=colors['bg'])
-            gender_frame.pack(pady=(30,0), fill='x', side='top')
+        gender_girl = ttk.Radiobutton(gender_frame,
+                                     name='gender_girl',
+                                     # bg=gender_color['bg'],
+                                     # activebackground=gender_color['activebackground'],
+                                     # activeforeground=gender_color['activeforeground'],
+                                     text='女生',
+                                     # font=('微软雅黑', 12),
+                                     variable=gender_var,
+                                     value='girl')
+        gender_girl.pack(side='left', padx=(15, 0))
 
-            gender_l_color = colors['gender_label']
-            gender_label = tk.Label(gender_frame,
-                                  name='gender_label',
-                                  text='性别',
-                                  font=('微软雅黑', 13),
-                                  bg=gender_l_color['bg'],
-                                  highlightcolor=gender_l_color['highlightcolor'],
-                                  highlightbackground=gender_l_color['highlightbackground'],
-                                  highlightthickness=0.1,
-                                  fg=gender_l_color['fg'],
-                                  bd=0.5)
-            gender_label.pack(side='left', anchor='n', padx=(20,0))
+        voice_frame = tk.Frame(setting_frame,
+                               name='voice_frame',
+                               bg=colors['bg'])
+        voice_frame.pack(pady=(30,0), fill='x', side='top')
 
-            gender_color = colors['gender_radiobutton']
-            if 'gender-var' in self.cache:
-                gender_var = self.cache['gender-var']
-            else:
-                gender_var = tk.StringVar(gender_frame, gender)
-                self.cache['gender-var'] = gender_var
-            self.ttk_style('TRadiobutton',background=gender_color['bg'],font=('微软雅黑',12))
-            gender_boy = ttk.Radiobutton(gender_frame,
-                                        name='gender_boy',
-                                        # bg=gender_color['bg'],
-                                        # activebackground=gender_color['activebackground'],
-                                        # activeforeground=gender_color['activeforeground'],
-                                        text='男生',
-                                        # font=('微软雅黑', 12),
-                                        variable=gender_var,
-                                        value='boy')
-            gender_boy.pack(side='left', padx=(25, 0))
+        voice_l_color = colors['voice_label']
+        voice_label = tk.Label(voice_frame,
+                               name='voice_label',
+                               text='声音模型（EdgeTTS）',
+                               font=('微软雅黑', 13),
+                               bg=voice_l_color['bg'],
+                               highlightcolor=voice_l_color['highlightcolor'],
+                               highlightbackground=voice_l_color['highlightbackground'],
+                               highlightthickness=0.1,
+                               fg=voice_l_color['fg'],
+                               bd=0.5)
+        voice_label.pack(side='left', anchor='n', padx=(20,0))
 
-            gender_girl = ttk.Radiobutton(gender_frame,
-                                         name='gender_girl',
-                                         # bg=gender_color['bg'],
-                                         # activebackground=gender_color['activebackground'],
-                                         # activeforeground=gender_color['activeforeground'],
-                                         text='女生',
-                                         # font=('微软雅黑', 12),
-                                         variable=gender_var,
-                                         value='girl')
-            gender_girl.pack(side='left', padx=(15, 0))
+        voice_c_color = colors['voice_combobox']
+        if 'voice-var' in self.cache:
+            voice_var = self.cache['voice-var']
+        else:
+            voice = voice if (voice:=self.get_setting('voice')) else ''
+            voice_var = tk.StringVar(voice_frame, voice)
+            self.cache['voice-var'] = voice_var
+        voices = (
+            "zh-CN-XiaoxiaoNeural",
+            "zh-CN-XiaoyiNeural",
+            "zh-CN-YunjianNeural",
+            "zh-CN-YunxiNeural",
+            "zh-CN-YunxiaNeural",
+            "zh-CN-XiaohanNeural",
+            "zh-CN-XiaomengNeural",
+            "zh-CN-XiaomoNeural",
+            "zh-CN-XiaoranNeural",
+            "zh-CN-XiaoruiNeural",
+            "zh-CN-XiaoshuangNeural",
+            "zh-CN-XiaoxuanNeural",
+            "zh-CN-XiaoyouNeural",
+            "zh-CN-YunyangNeural",
+            "zh-CN-YunyeNeural",
+            "zh-CN-YunzeNeural"
+        )
+        voice_combobox = ttk.Combobox(voice_frame,
+                                      name='voice_combobox',
+                                      textvariable=voice_var,
+                                      font=('微软雅黑',12),
+                                      values=voices,
+                                      background=voice_c_color['bg'])
+        voice_combobox.pack(side='left', anchor='n', padx=(15,0))
 
-            voice_frame = tk.Frame(setting_frame,
-                                   name='voice_frame',
-                                   bg=colors['bg'])
-            voice_frame.pack(pady=(30,0), fill='x', side='top')
+        introduction_frame = tk.Frame(setting_frame,
+                                      name='introduction_frame',
+                                      bg=colors['bg'])
+        introduction_frame.pack(pady=(30,60), fill='x', side='top')
 
-            voice_l_color = colors['voice_label']
-            voice_label = tk.Label(voice_frame,
-                                   name='voice_label',
-                                   text='声音模型（EdgeTTS）',
-                                   font=('微软雅黑', 13),
-                                   bg=voice_l_color['bg'],
-                                   highlightcolor=voice_l_color['highlightcolor'],
-                                   highlightbackground=voice_l_color['highlightbackground'],
-                                   highlightthickness=0.1,
-                                   fg=voice_l_color['fg'],
-                                   bd=0.5)
-            voice_label.pack(side='left', anchor='n', padx=(20,0))
+        introduction_l_color = colors['introduction_label']
+        introduction_label = tk.Label(introduction_frame,
+                                      name='voice_label',
+                                      text='描述',
+                                      font=('微软雅黑', 13),
+                                      bg=introduction_l_color['bg'],
+                                      highlightcolor=introduction_l_color['highlightcolor'],
+                                      highlightbackground=introduction_l_color['highlightbackground'],
+                                      highlightthickness=0.1,
+                                      fg=introduction_l_color['fg'],
+                                      bd=0.5)
+        introduction_label.pack(side='left', anchor='n', padx=(20,0))
 
-            voice_c_color = colors['voice_combobox']
-            if 'voice-var' in self.cache:
-                voice_var = self.cache['voice-var']
-            else:
-                voice = voice if (voice:=self.get_setting('voice')) else ''
-                voice_var = tk.StringVar(voice_frame, voice)
-                self.cache['voice-var'] = voice_var
-            voices = (
-                "zh-CN-XiaoxiaoNeural",
-                "zh-CN-XiaoyiNeural",
-                "zh-CN-YunjianNeural",
-                "zh-CN-YunxiNeural",
-                "zh-CN-YunxiaNeural",
-                "zh-CN-XiaohanNeural",
-                "zh-CN-XiaomengNeural",
-                "zh-CN-XiaomoNeural",
-                "zh-CN-XiaoranNeural",
-                "zh-CN-XiaoruiNeural",
-                "zh-CN-XiaoshuangNeural",
-                "zh-CN-XiaoxuanNeural",
-                "zh-CN-XiaoyouNeural",
-                "zh-CN-YunyangNeural",
-                "zh-CN-YunyeNeural",
-                "zh-CN-YunzeNeural"
-            )
-            voice_combobox = ttk.Combobox(voice_frame,
-                                          name='voice_combobox',
-                                          textvariable=voice_var,
-                                          font=('微软雅黑',12),
-                                          values=voices,
-                                          background=voice_c_color['bg'])
-            voice_combobox.pack(side='left', anchor='n', padx=(15,0))
-
-            introduction_frame = tk.Frame(setting_frame,
-                                          name='introduction_frame',
-                                          bg=colors['bg'])
-            introduction_frame.pack(pady=(30,0), fill='x', side='top')
-
-            introduction_l_color = colors['introduction_label']
-            introduction_label = tk.Label(introduction_frame,
-                                          name='voice_label',
-                                          text='描述',
-                                          font=('微软雅黑', 13),
-                                          bg=introduction_l_color['bg'],
-                                          highlightcolor=introduction_l_color['highlightcolor'],
-                                          highlightbackground=introduction_l_color['highlightbackground'],
-                                          highlightthickness=0.1,
-                                          fg=introduction_l_color['fg'],
-                                          bd=0.5)
-            introduction_label.pack(side='left', anchor='n', padx=(20,0))
-
-            insertor_color = colors['insertor_text']
-            text_insertor = tk.Text(introduction_frame,
-                                    name='text_insertor',
-                                    wrap='word',
-                                    bg=insertor_color['bg'],
-                                    font=('微软雅黑',12),
-                                    relief='solid',
-                                    bd=0.5,
-                                    width=40,
-                                    height=10,
-                                    padx=2,
-                                    pady=2)
-            text_insertor.pack(side='left', anchor='n', padx=(15,0))
-            text_insertor.insert(0.0, introduction)
+        insertor_color = colors['insertor_text']
+        text_insertor = tk.Text(introduction_frame,
+                                name='text_insertor',
+                                wrap='word',
+                                bg=insertor_color['bg'],
+                                font=('微软雅黑',12),
+                                relief='solid',
+                                bd=0.5,
+                                width=40,
+                                height=10,
+                                padx=2,
+                                pady=2)
+        text_insertor.pack(side='left', anchor='n', padx=(15,0))
+        text_insertor.insert(0.0, introduction)
 
         self.ui_logger.info('build the character_setting page')

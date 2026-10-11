@@ -7,6 +7,7 @@ import os
 import json
 import queue
 import logging
+import argparse
 import typing as tp
 import threading as th
 from . import api, datamanage, voice, ui
@@ -126,6 +127,11 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         """
         PyAI Initialize
         """
+        a_parse = argparse.ArgumentParser('PyAI')
+        a_parse.add_argument('-d', '--debug', action='store_true')
+        args = a_parse.parse_args()
+        self.logger_level = logging.DEBUG if args.debug else logging.INFO
+
         self.logger = self.get_logger(__name__)
         self.logger.debug(self.config)
 
@@ -144,12 +150,13 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
 
 
 
-    def PyAI(self) -> None:
+    def pyai(self) -> None:
         """
         PyAI 运行
         :return: None
         """
         ui.Ui.build_ui(self)
+        self.logger.info('Building ui ended')
 
 
 
@@ -159,20 +166,19 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         :param name: 记录器名
         :return: Logger
         """
-        level = logging.DEBUG
         logger = logging.getLogger(name)
-        logger.setLevel(level)
+        logger.setLevel(self.logger_level)
 
         formatter = logging.Formatter(self.log_config['format'])
 
         file_handler = logging.FileHandler(f'{self.log_config['dir']}{name}.log', encoding='utf-8')
         file_handler.setFormatter(formatter)
-        file_handler.setLevel(level)
+        file_handler.setLevel(self.logger_level)
         logger.addHandler(file_handler)
 
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
-        stream_handler.setLevel(level)
+        stream_handler.setLevel(self.logger_level)
         logger.addHandler(stream_handler)
 
         return logger
@@ -183,4 +189,4 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
 
 def main() -> None:
     app = PyAI()
-    app.PyAI()
+    app.pyai()

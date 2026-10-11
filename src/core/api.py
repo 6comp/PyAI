@@ -298,12 +298,12 @@ TA的名字：{name[1] if name[1] != 'TA' else '暂时不知道'}
                                                                f"历史生成：\n{history if history else '无'}")}]
         self.api_logger.debug(self.payload)
         pd = json.dumps(self.payload, ensure_ascii=False)
-
         analysis = self._request(pd)
         self.api_logger.debug(analysis)
         self.payload['messages'] = self.messages
 
         if analysis:
+            analysis[0].removeprefix('```json').removesuffix('```')
             return analysis
 
         self.api_logger.debug('No')

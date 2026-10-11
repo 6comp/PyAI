@@ -219,7 +219,7 @@
               "highlightbackground": "purple"
             },
           "name_entry": {
-              "bg": "#FFF9F2",
+              "bg": "#FFF0F5",
               "highlightcolor": "white",
               "highlightbackground": "#FFE4E1"
             },
@@ -239,7 +239,7 @@
             "highlightbackground": "purple"
             },
           "voice_combobox": {
-            "bg": "#FFF9F2"
+            "bg": "#FFF0F5"
           },
           "introduction_label": {
             "fg": "black",
@@ -248,7 +248,7 @@
             "highlightbackground": "purple"
           },
             "insertor_text": {
-              "bg": "#FFF9F2"
+              "bg": "#FFF0F5"
           }
         }
       }
