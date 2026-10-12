@@ -1,9 +1,14 @@
 # coding=UTF-8
 
 """
-authors: 6tft6, 6comp
+Copyright (c) 2026 6tft6 & 6comp
+
+author: 6tft6(6comp)
 version: 0.1.0
-Only learn and not allowed to commercial use.
+license: MIT-LICENSE
+
+An AI companion basedon the DeepSeek AI model.
+Hoping to bring you warmth and company.
 """
 
 import core
