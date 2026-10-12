@@ -239,9 +239,9 @@ class Ui:
                     result = self.chat(txt)
                     if result:
                         answer, date = result
-                        read_content = re.sub(r'\(.*+\)', '，', answer)
-                        self.ui_logger.debug(read_content)
-                        self.say(read_content)
+                        # read_content = re.sub(r'\(.*+\)', '，', answer)
+                        # self.ui_logger.debug(read_content)
+                        # self.say(read_content)
                         text_control.config(state='normal')
                         text_control.insert('end', '\n', r'\n')
                         text_control.insert('end', answer+'\n', 'ai')
@@ -709,7 +709,7 @@ Hoping to bring you warmth and company.
                     save_info = {"对话者相关属性":{
                                      n:{
                                         "性别":g,
-                                        "补充":[i]
+                                        "补充":i
                                         },
                                     "暂时未知":{}
                                                 },

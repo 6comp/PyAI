@@ -128,9 +128,11 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         PyAI Initialize
         """
         a_parse = argparse.ArgumentParser('PyAI')
-        a_parse.add_argument('-d', '--debug', action='store_true')
+        a_parse.add_argument('-l', '--log-level',
+                             default='info', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                             help='Set log level,default=info,choices:debug/info/warning/error')
         args = a_parse.parse_args()
-        self.logger_level = logging.DEBUG if args.debug else logging.INFO
+        self.logger_level = getattr(logging, args.log_level)
 
         self.logger = self.get_logger(__name__)
         self.logger.debug(self.config)

@@ -202,7 +202,7 @@ TA的名字：{name[1] if name[1] != 'TA' else '暂时不知道'}
         '''
         setting = {'content': ai_setting, 'role': 'system'}  # ai 设定
         self.messages = [{'content': content, 'role': 'assistant' if n == name[0] else 'user'}
-                         for content, n in info['正在进行的对话']]
+                         for content, n in info['正在进行的对话'].items()]
         self.messages.insert(0, setting)
         self.payload['messages'] = self.messages
 
