@@ -433,138 +433,136 @@ class Ui:
         :return: None
         """
         self.pages['home'].forget()
-        if 'setting' in self.pages:self.pages['setting'].pack(fill='both')
 
+        colors = self.colors['setting']
+        setting = tk.Frame(self.main_tk,
+                           name='about',
+                           bg=colors['bg'],
+                           highlightcolor=colors['highlightcolor'],
+                           highlightbackground=colors['highlightbackground'],
+                           highlightthickness=0.1)
+        setting.pack(fill='both')
+        self.pages['setting'] = setting
+
+        back_color = colors['back_button']
+        def save() -> None:
+            """
+            保存或更新设置数据
+            :return: None
+            """
+            get_api = re.sub(r'\s?','',api_e.get())
+            self.ui_logger.debug(f'{get_api} | {old_api}')
+            if get_api != old_api:
+                self.ui_logger.debug('Updating api')
+                self.set_api(get_api)                                           # 调用 DataManager 的 set_api 方法
+                self.add_api(get_api)                                               # 更新请求头中的 API
+                # self.show_warn('info', '完成', '设置完成！请重新启动！')
+                # raise SystemExit
+        back_button = tk.Button(setting,
+                                name='back_button',
+                                text='返回',
+                                activebackground=back_color['activebackground'],
+                                activeforeground=back_color['activeforeground'],
+                                bg=back_color['bg'],
+                                bd=0.5,
+                                relief='solid',
+                                font=('微软雅黑', 10),
+                                padx=15,
+                                pady=2,
+                                command=lambda :self._back(setting,
+                                                           self.pages['home'], pack_kwargs={'fill':'both'},
+                                                           func=save)
+                                )
+        back_button.pack(anchor='w', pady=(20,0), padx=(20,0))
+
+        setting_frame = tk.LabelFrame(setting,
+                                      name='setting_frame_settings',
+                                      text='  设置  ',
+                                      font=('微软雅黑',12),
+                                      bg=colors['bg'],
+                                      highlightcolor=colors['highlightcolor'],
+                                      highlightbackground=colors['highlightbackground'],
+                                      highlightthickness=0.1)
+        setting_frame.pack(fill='both', pady=(20,350), padx=20)
+
+        api_frame = tk.Frame(setting_frame,
+                             name='api_frame',
+                             bg=colors['bg'])
+        api_frame.pack(pady=(25,0), fill='x', side='top')
+
+        api_l_color = colors['api_label']
+        api_l = tk.Label(api_frame,
+                         name='api_label',
+                         text='API',
+                         font=('微软雅黑',13),
+                         bg=api_l_color['bg'],
+                         highlightcolor=api_l_color['highlightcolor'],
+                         highlightbackground=api_l_color['highlightbackground'],
+                         highlightthickness=0.1,
+                         fg=api_l_color['fg'],
+                         bd=0.5)
+        api_l.pack(side='left', anchor='n', padx=(20,0))
+
+        api_e_color = colors['api_entry']
+        api = self.get_api()
+        api_e = tk.Entry(api_frame,
+                         bg=api_e_color['bg'],
+                         font=('微软雅黑',12),
+                         highlightcolor=api_e_color['highlightcolor'],
+                         highlightbackground=api_e_color['highlightbackground'],
+                         relief='solid',
+                         width=50)
+        api_e.pack(side='left', padx=(20,0))
+        api_e.insert(0, api if api else '')
+        old_api = api_e.get()
+
+        mode_frame = tk.Frame(setting_frame,
+                              name='mode_frame',
+                              bg=colors['bg'])
+        mode_frame.pack(pady=(25,0), fill='x', side='top')
+
+        mode_l_color = colors['mode_label']
+        mode_label = tk.Label(mode_frame,
+                              name='mode_label',
+                              text='昼夜模式（暂定）',
+                              font=('微软雅黑',13),
+                              bg=mode_l_color['bg'],
+                              highlightcolor=mode_l_color['highlightcolor'],
+                              highlightbackground=mode_l_color['highlightbackground'],
+                              highlightthickness=0.1,
+                              fg=mode_l_color['fg'],
+                              bd=0.5)
+        mode_label.pack(side='left', anchor='n', padx=(20,0))
+
+        mode_color = colors['mode_radiobutton']
+        if 'mode-var' in self.cache:
+            var = self.cache['mode-var']
         else:
-            colors = self.colors['setting']
-            setting = tk.Frame(self.main_tk,
-                               name='about',
-                               bg=colors['bg'],
-                               highlightcolor=colors['highlightcolor'],
-                               highlightbackground=colors['highlightbackground'],
-                               highlightthickness=0.1)
-            setting.pack(fill='both')
-            self.pages['setting'] = setting
+            var = tk.StringVar(mode_frame, 'light')
+            self.cache['mode-var'] = var
+        self.ttk_style('TRadiobutton', background=mode_color['bg'], font=('微软雅黑',12))
+        mode_light = ttk.Radiobutton(mode_frame,
+                                    name='mode_light',
+                                    #bg=mode_color['bg'],
+                                    #activebackground=mode_color['activebackground'],
+                                    #activeforeground=mode_color['activeforeground'],
+                                    text='白昼',
+                                    #font=('微软雅黑',12),
+                                    variable=var,
+                                    value='light')
+        mode_light.pack(side='left', padx=(30,0))
 
-            back_color = colors['back_button']
-            def save() -> None:
-                """
-                保存或更新设置数据
-                :return: None
-                """
-                get_api = re.sub(r'\s?','',api_e.get())
-                self.ui_logger.debug(f'{get_api} | {old_api}')
-                if get_api != old_api:
-                    self.ui_logger.debug('Updating api')
-                    self.set_api(get_api)                                           # 调用 DataManager 的 set_api 方法
-                    self.add_api(get_api)                                               # 更新请求头中的 API
-                    # self.show_warn('info', '完成', '设置完成！请重新启动！')
-                    # raise SystemExit
-            back_button = tk.Button(setting,
-                                    name='back_button',
-                                    text='返回',
-                                    activebackground=back_color['activebackground'],
-                                    activeforeground=back_color['activeforeground'],
-                                    bg=back_color['bg'],
-                                    bd=0.5,
-                                    relief='solid',
-                                    font=('微软雅黑', 10),
-                                    padx=15,
-                                    pady=2,
-                                    command=lambda :self._back(setting,
-                                                               self.pages['home'], pack_kwargs={'fill':'both'},
-                                                               func=save)
-                                    )
-            back_button.pack(anchor='w', pady=(20,0), padx=(20,0))
-
-            setting_frame = tk.LabelFrame(setting,
-                                          name='setting_frame_settings',
-                                          text='  设置  ',
-                                          font=('微软雅黑',12),
-                                          bg=colors['bg'],
-                                          highlightcolor=colors['highlightcolor'],
-                                          highlightbackground=colors['highlightbackground'],
-                                          highlightthickness=0.1)
-            setting_frame.pack(fill='both', pady=(20,350), padx=20)
-
-            api_frame = tk.Frame(setting_frame,
-                                 name='api_frame',
-                                 bg=colors['bg'])
-            api_frame.pack(pady=(25,0), fill='x', side='top')
-
-            api_l_color = colors['api_label']
-            api_l = tk.Label(api_frame,
-                             name='api_label',
-                             text='API',
-                             font=('微软雅黑',13),
-                             bg=api_l_color['bg'],
-                             highlightcolor=api_l_color['highlightcolor'],
-                             highlightbackground=api_l_color['highlightbackground'],
-                             highlightthickness=0.1,
-                             fg=api_l_color['fg'],
-                             bd=0.5)
-            api_l.pack(side='left', anchor='n', padx=(20,0))
-
-            api_e_color = colors['api_entry']
-            api = self.get_api()
-            api_e = tk.Entry(api_frame,
-                             bg=api_e_color['bg'],
-                             font=('微软雅黑',12),
-                             highlightcolor=api_e_color['highlightcolor'],
-                             highlightbackground=api_e_color['highlightbackground'],
-                             relief='solid',
-                             width=50)
-            api_e.pack(side='left', padx=(20,0))
-            api_e.insert(0, api if api else '')
-            old_api = api_e.get()
-
-            mode_frame = tk.Frame(setting_frame,
-                                  name='mode_frame',
-                                  bg=colors['bg'])
-            mode_frame.pack(pady=(25,0), fill='x', side='top')
-
-            mode_l_color = colors['mode_label']
-            mode_label = tk.Label(mode_frame,
-                                  name='mode_label',
-                                  text='昼夜模式（暂定）',
-                                  font=('微软雅黑',13),
-                                  bg=mode_l_color['bg'],
-                                  highlightcolor=mode_l_color['highlightcolor'],
-                                  highlightbackground=mode_l_color['highlightbackground'],
-                                  highlightthickness=0.1,
-                                  fg=mode_l_color['fg'],
-                                  bd=0.5)
-            mode_label.pack(side='left', anchor='n', padx=(20,0))
-
-            mode_color = colors['mode_radiobutton']
-            if 'mode-var' in self.cache:
-                var = self.cache['mode-var']
-            else:
-                var = tk.StringVar(mode_frame, 'light')
-                self.cache['mode-var'] = var
-            self.ttk_style('TRadiobutton', background=mode_color['bg'], font=('微软雅黑',12))
-            mode_light = ttk.Radiobutton(mode_frame,
-                                        name='mode_light',
-                                        #bg=mode_color['bg'],
-                                        #activebackground=mode_color['activebackground'],
-                                        #activeforeground=mode_color['activeforeground'],
-                                        text='白昼',
-                                        #font=('微软雅黑',12),
-                                        variable=var,
-                                        value='light')
-            mode_light.pack(side='left', padx=(30,0))
-
-            mode_dark = ttk.Radiobutton(mode_frame,
-                                       name='mode_dark',
-                                       #bg=mode_color['bg'],
-                                       #activebackground=mode_color['activebackground'],
-                                       #activeforeground=mode_color['activeforeground'],
-                                       text='黑夜',
-                                       #font=('微软雅黑',12),
-                                       variable=var,
-                                       value='dark')
-            mode_dark.pack(side='left', padx=(20,0))
-            old_mode = var.get()
+        mode_dark = ttk.Radiobutton(mode_frame,
+                                   name='mode_dark',
+                                   #bg=mode_color['bg'],
+                                   #activebackground=mode_color['activebackground'],
+                                   #activeforeground=mode_color['activeforeground'],
+                                   text='黑夜',
+                                   #font=('微软雅黑',12),
+                                   variable=var,
+                                   value='dark')
+        mode_dark.pack(side='left', padx=(20,0))
+        old_mode = var.get()
 
         self.ui_logger.info('build the setting page')
 
