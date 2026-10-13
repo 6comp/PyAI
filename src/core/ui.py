@@ -154,6 +154,7 @@ class Ui:
         else:
             colors = self.colors['home']                        # 获取颜色配置
 
+
             # 搭建主页面容器
             home = tk.Frame(self.main_tk,
                             name='home',
@@ -200,6 +201,7 @@ class Ui:
                                    pady=1,
                                    command=cmd)
                 button.pack(pady=(20,0), padx=pdx)
+
 
             # 对话区
             colors_frame = colors['chat_frame']
@@ -302,6 +304,7 @@ class Ui:
                     self.ui_logger.debug('Save info done')
                     self.save_dialogs(*self.new_dialogs)
                     self.ui_logger.debug('save dialogs done')
+                    self.new_dialogs.clear()
                     self.show_warn('info', '提示', '保存完成')
                 else:
                     self.ui_logger.debug('No dialogs')
@@ -323,26 +326,25 @@ class Ui:
             save_button.bind('<Control-S>', save_dialog)
 
             text_color = colors_frame['chat_text']
+            self.cache['dialogs-end_index'] = None
             def flush(event) -> None:
-                if 'flush-stop' not in self.cache:
-                    self.cache['flush-stop'] = False
-                if not self.cache['flush-stop']:
-                    if event.delta < 0:
-                        top = scr_text.yview()[0]
-                        if top == 0.0:
-                            scr_text.config(state='normal')
-                            for _ in range(20):
-                                try:
-                                    dialogs = next(self.get_dialogs())
-                                except StopIteration:
-                                    self.ui_logger.info('No dialogs can insert')
-                                    self.cache['flush-stop'] = True
-                                    return None
-                                user, ai, date = dialogs
-                                scr_text.insert(0.0, user, 'user')
-                                scr_text.insert(1.0, '\n', r'\n')
-                                scr_text.insert(1.0, ai, 'ai')
-                return None
+                if event.delta < 0:
+                    top = scr_text.yview()[0]
+                    if top == 0.0:
+                        scr_text.config(state='normal')
+                        for _ in range(20):
+                            index, dialogs = next(self.get_dialogs())
+                            if index == self.cache['dialogs-end_index']:
+                                self.ui_logger.info('No dialogs can insert')
+                                break
+                            ai, user, date = dialogs
+                            scr_text.insert(1.0, user+'\n', 'user')
+                            scr_text.insert(2.0, '\n', r'\n')
+                            scr_text.insert(3.0, ai+'\n', 'ai')
+                            scr_text.insert(4.0, '\n', r'\n')
+                            self.cache['dialogs-end_index'] = index
+                scr_text.config(state='disabled')
+
             scr_text = scrolledtext.ScrolledText(chat_frame,
                                              wrap='char',
                                              bg=text_color['bg'],
@@ -450,14 +452,13 @@ class Ui:
             保存或更新设置数据
             :return: None
             """
-            get_api = re.sub(r'\s?','',api_e.get())
-            self.ui_logger.debug(f'{get_api} | {old_api}')
-            if get_api != old_api:
-                self.ui_logger.debug('Updating api')
+            a = self.show_warn('question', '询问', '是否保存？')
+            if a:
+                get_api = re.sub(r'\s?','',api_e.get())
+                self.ui_logger.debug(get_api)
                 self.set_api(get_api)                                           # 调用 DataManager 的 set_api 方法
-                self.add_api(get_api)                                               # 更新请求头中的 API
-                # self.show_warn('info', '完成', '设置完成！请重新启动！')
-                # raise SystemExit
+                self.add_api(get_api)                                           # 更新请求头中的 API
+            self.ui_logger.info('Updating api ended')
         back_button = tk.Button(setting,
                                 name='back_button',
                                 text='返回',
@@ -681,52 +682,54 @@ Hoping to bring you warmth and company.
         character_settings.pack(fill='both')
         self.pages['character_setting'] = character_settings
 
-        back_color = colors['back_button']
         def save() -> None:
             """
             退出时保存的钩子函数
             :return: None
             """
-            ai = n, g, v, i = name_e.get().replace('\n',''), gender_var.get(), voice_var.get(), text_insertor.get(0.0, 'end').rstrip()
-            if all(ai):
-                if v not in voices:
-                    self.show_warn('warning', '提示', '你选择的声音模型不可使用')
-                    return None
-                self.update_setting('voice', v)
-                if all_info:
-                    abouts = all_info['对话者相关属性']
-                    self.ui_logger.debug(abouts)
-                    old_info = abouts[name]
-                    if n != name:
-                        self.ui_logger.debug('Update old name')
-                        del abouts[name]
-                    abouts[n] = old_info
-                    self.ui_logger.debug(abouts)
-                    abouts[n]['性别']=g
-                    abouts[n]['补充']=i
-                    save_info = all_info
-                else:
-                    save_info = {"对话者相关属性":{
-                                     n:{
-                                        "性别":g,
-                                        "补充":i
-                                        },
-                                    "暂时未知":{}
-                                                },
-                                    "相关记忆":[],
-                                    "正在进行的对话":{}
-                                }
-                self.ui_logger.debug(save_info)
-                self.save_info(json.dumps(save_info, ensure_ascii=False))
-                self.add_info(save_info)
-                self.show_warn('info', '完成', '设置完成！')
-                return None
+            a = self.show_warn('question', '询问', '是否保存？')
+            if not a:return None
 
-            self.show_warn('warning', '提示', '还有空余选项未填')
-            self.ui_logger.warning('Some question have not answered')
+            ai = n, g, v, i = name_e.get().replace('\n',''), gender_var.get(), voice_var.get(), text_insertor.get(0.0, 'end').rstrip()
+            if not all(ai):
+                self.show_warn('warning', '提示', '还有空余选项未填')
+                self.ui_logger.warning('Some question have not answered')
+                return None
+            if v not in voices:
+                self.show_warn('warning', '提示', '你选择的声音模型不可使用')
+                return None
+            self.update_setting('voice', v)
+            if all_info:
+                abouts = all_info['对话者相关属性']['0']
+                self.ui_logger.debug(abouts)
+                abouts['姓名']=n
+                abouts['性别']=g
+                abouts['补充']=i
+                self.ui_logger.debug(abouts)
+                save_info = abouts
+            else:
+                save_info = {"对话者相关属性":{
+                                 '0':{
+                                     "姓名":n,
+                                     "性别":g,
+                                     "补充":i
+                                     },
+                                 '1':{
+                                     "姓名":'暂时未知',
+                                     "性别":'暂时未知',
+                                     "补充":'暂无'
+                                     }           },
+                                "相关记忆":[],
+                                "正在进行的对话":{}
+                            }
+            self.ui_logger.debug(save_info)
+            self.save_info(json.dumps(save_info, ensure_ascii=False))
+            self.add_info(save_info)
+
             self.ui_logger.info('Save data about the character')
             return None
 
+        back_color = colors['back_button']
         back_button = tk.Button(character_settings,
                                 name='back_button',
                                 text='返回',
@@ -747,10 +750,11 @@ Hoping to bring you warmth and company.
         name,introduction,gender=('',)*3
         if all_info:=self.get_info():
             all_info = json.loads(all_info)
-            name = list(all_info['对话者相关属性'].keys())[0]
-            introduction = all_info['对话者相关属性'][name]
+            self.ui_logger.debug(all_info)
+            introduction = all_info['对话者相关属性']['0']
+            name = introduction['姓名']
             gender = introduction['性别']
-            del introduction['性别']
+            del introduction['性别'], introduction['姓名']
             introduction = '\n\n'.join((i_value+'\n' for i_value in introduction.values()))
 
         setting_frame = tk.Frame(character_settings,
@@ -825,7 +829,7 @@ Hoping to bring you warmth and company.
                                     text='男生',
                                     # font=('微软雅黑', 12),
                                     variable=gender_var,
-                                    value='boy')
+                                    value='男生')
         gender_boy.pack(side='left', padx=(25, 0))
 
         gender_girl = ttk.Radiobutton(gender_frame,
@@ -836,7 +840,7 @@ Hoping to bring you warmth and company.
                                      text='女生',
                                      # font=('微软雅黑', 12),
                                      variable=gender_var,
-                                     value='girl')
+                                     value='女生')
         gender_girl.pack(side='left', padx=(15, 0))
 
         voice_frame = tk.Frame(setting_frame,

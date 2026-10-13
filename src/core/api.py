@@ -191,17 +191,19 @@ class Api:
         :return: None
         """
         self.api_logger.debug(info)
-
-        name = list(info['对话者相关属性'].keys())
-        about = list(info['对话者相关属性'].values())
+        ai_about = info['对话者相关属性']['0']
+        ai_name = ai_about['姓名']
+        user_about = info['对话者相关属性']['1']
+        user_name = user_about['姓名']
         ai_setting = f'''
-名字：{name[0]}
-相关属性：{about[0]}
-TA的名字：{name[1] if name[1] != 'TA' else '暂时不知道'}
+名字：{ai_name}
+相关属性：{ai_about}
+TA的名字：{user_name}
+TA的属性：{user_about}
 相关记忆：{info['相关记忆']}
         '''
         setting = {'content': ai_setting, 'role': 'system'}  # ai 设定
-        self.messages = [{'content': content, 'role': 'assistant' if n == name[0] else 'user'}
+        self.messages = [{'content': content, 'role': 'assistant' if n == user_name else 'user'}
                          for content, n in info['正在进行的对话'].items()]
         self.messages.insert(0, setting)
         self.payload['messages'] = self.messages

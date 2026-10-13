@@ -181,7 +181,7 @@ class DataManager:
     def get_dialogs(self) -> tp.Generator|None:
         """
         获取聊天记录（生成器）
-        :return: tuple[str,str,str]
+        :return: Generator
         """
         self.data_logger.info('Start to get dialogs')
 
@@ -192,13 +192,12 @@ class DataManager:
             if result:
                 self.data_logger.debug('Dialogs exists')
                 end_index = result[-1][0]
-                for index in range(end_index, 0, -1):               # 反向生成 id 索引
+                for index in range(end_index, -1, -1):               # 反向生成 id 索引
                     dialog = cursor.execute('SELECT ai,user,date FROM dialogs WHERE id=?',(index,)).fetchone()
-                    self.data_logger.debug(dialog)
-                    yield dialog
+                    self.data_logger.debug(f'{index}: {dialog}')
+                    yield index,dialog
 
-        self.data_logger.info('Get dialogs ended')
-        return None
+        # self.data_logger.info('Get dialogs ended')
 
         # 废弃方案
         # with sqlite3.connect(self.db_paths['dialog']) as connection:

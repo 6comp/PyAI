@@ -129,7 +129,7 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         """
         a_parse = argparse.ArgumentParser('PyAI')
         a_parse.add_argument('-l', '--log-level',
-                             default='info', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                             default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
                              help='Set log level,default=info,choices:debug/info/warning/error')
         args = a_parse.parse_args()
         self.logger_level = getattr(logging, args.log_level)
