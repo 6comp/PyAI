@@ -326,23 +326,22 @@ class Ui:
             save_button.bind('<Control-S>', save_dialog)
 
             text_color = colors_frame['chat_text']
-            self.cache['dialogs-end_index'] = None
+            self.cache['dialogs-generator'] = self.get_dialogs()
             def flush(event) -> None:
                 if event.delta < 0:
                     top = scr_text.yview()[0]
                     if top == 0.0:
                         scr_text.config(state='normal')
-                        for _ in range(20):
-                            index, dialogs = next(self.get_dialogs())
-                            if index == self.cache['dialogs-end_index']:
-                                self.ui_logger.info('No dialogs can insert')
-                                break
-                            ai, user, date = dialogs
-                            scr_text.insert(1.0, user+'\n', 'user')
-                            scr_text.insert(2.0, '\n', r'\n')
-                            scr_text.insert(3.0, ai+'\n', 'ai')
-                            scr_text.insert(4.0, '\n', r'\n')
-                            self.cache['dialogs-end_index'] = index
+                        try:
+                            for _ in range(20):
+                                dialogs = next(self.cache['dialogs-generator'])
+                                ai, user, date = dialogs
+                                scr_text.insert(1.0, user+'\n', 'user')
+                                scr_text.insert(2.0, '\n', r'\n')
+                                scr_text.insert(3.0, ai+'\n', 'ai')
+                                scr_text.insert(4.0, '\n', r'\n')
+                        except StopIteration:
+                            self.ui_logger.info('No dialogs can show')
                 scr_text.config(state='disabled')
 
             scr_text = scrolledtext.ScrolledText(chat_frame,

@@ -192,10 +192,10 @@ class DataManager:
             if result:
                 self.data_logger.debug('Dialogs exists')
                 end_index = result[-1][0]
-                for index in range(end_index, -1, -1):               # 反向生成 id 索引
+                for index in range(end_index, 0, -1):               # 反向生成 id 索引
                     dialog = cursor.execute('SELECT ai,user,date FROM dialogs WHERE id=?',(index,)).fetchone()
                     self.data_logger.debug(f'{index}: {dialog}')
-                    yield index,dialog
+                    yield dialog
 
         # self.data_logger.info('Get dialogs ended')
 
