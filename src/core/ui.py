@@ -705,7 +705,7 @@ Hoping to bring you warmth and company.
                 abouts['性别']=g
                 abouts['补充']=i
                 self.ui_logger.debug(abouts)
-                save_info = abouts
+                save_info = all_info
             else:
                 save_info = {"对话者相关属性":{
                                  '0':{
@@ -717,7 +717,8 @@ Hoping to bring you warmth and company.
                                      "姓名":'暂时未知',
                                      "性别":'暂时未知',
                                      "补充":'暂无'
-                                     }           },
+                                     }
+                                            },
                                 "相关记忆":[],
                                 "正在进行的对话":{}
                             }
