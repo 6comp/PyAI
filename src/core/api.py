@@ -203,8 +203,8 @@ TA的属性：{user_about}
 相关记忆：{info['相关记忆']}
         '''
         setting = {'content': ai_setting, 'role': 'system'}  # ai 设定
-        self.messages = [{'content': content, 'role': 'assistant' if n == "0" else 'user'}
-                         for content, n in info['正在进行的对话'].items()]
+        self.messages = [{'content': content, 'role': 'assistant' if index == "0" else 'user'}
+                         for index, content in info['正在进行的对话'].items()]
         self.messages.insert(0, setting)
         self.payload['messages'] = self.messages
 

@@ -305,6 +305,7 @@ class Ui:
                     self.save_dialogs(*self.new_dialogs)
                     self.ui_logger.debug('save dialogs done')
                     self.new_dialogs.clear()
+                    self.add_info(json.loads(analysis))
                     self.show_warn('info', '提示', '保存完成')
                 else:
                     self.ui_logger.debug('No dialogs')
@@ -328,7 +329,7 @@ class Ui:
             text_color = colors_frame['chat_text']
             self.cache['dialogs-generator'] = self.get_dialogs()
             def flush(event) -> None:
-                if event.delta < 0:
+                if event.delta:
                     top = scr_text.yview()[0]
                     if top == 0.0:
                         scr_text.config(state='normal')

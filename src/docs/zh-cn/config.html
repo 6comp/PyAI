@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于人物配置 · PyAI</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,"Microsoft YaHei","Segoe UI",sans-serif;transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s}
+        :root{--bg-page:#f7f8fa;--bg-card:#ffffff;--text-title:#202938;--text-desc:#6b7280;--text-normal:#333;--border:#e5e7eb;--link:#3b7ddd;--hover:#f0f6ff;--code:#f4f5f7;--thead:#f0f6ff;--shadow:0 2px 12px rgba(0,0,0,.06);--tip:#fff7ed;--tip-border:#fdba74}
+        .dark{--bg-page:#17181c;--bg-card:#222429;--text-title:#f1f3f7;--text-desc:#a1a5ad;--text-normal:#e5e7eb;--border:#383a42;--link:#79b8ff;--hover:#2b3444;--code:#2b2f36;--thead:#2b3444;--shadow:0 2px 12px rgba(0,0,0,.3);--tip:#2b2418;--tip-border:#8a5a2b}
+        body{background:var(--bg-page);color:var(--text-normal);min-height:100vh;padding:20px 16px 60px}
+        .topbar{max-width:860px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between}
+        .back{color:var(--link);text-decoration:none;font-size:14px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);box-shadow:var(--shadow)}
+        .back:hover{background:var(--hover)}
+        .theme-toggle{border:1px solid var(--border);background:var(--bg-card);color:var(--text-normal);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:var(--shadow)}
+        .container{max-width:860px;margin:0 auto;background:var(--bg-card);padding:40px 48px;border-radius:14px;box-shadow:var(--shadow)}
+        h1{font-size:28px;color:var(--text-title);margin-bottom:8px;font-weight:700}
+        .lead{color:var(--text-desc);font-size:15px;margin-bottom:24px;line-height:1.7}
+        h2{font-size:21px;color:var(--text-title);margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        p{line-height:1.8;margin:8px 0}
+        ul,ol{line-height:1.8;margin:8px 0 8px 22px}
+        li{margin:5px 0}
+        code{background:var(--code);padding:2px 6px;border-radius:5px;font-family:Consolas,Monaco,"Courier New",monospace;font-size:13px}
+        table{width:100%;border-collapse:collapse;margin:12px 0}
+        th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;font-size:14px}
+        th{background:var(--thead);color:var(--text-title);font-weight:600}
+        tr:nth-child(even) td{background:var(--hover)}
+        .tip{background:var(--tip);border-left:4px solid var(--tip-border);padding:12px 16px;border-radius:6px;margin:12px 0;line-height:1.7;font-size:14px}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="back" href="index.html">← 返回</a>
+        <button class="theme-toggle" id="toggleBtn">🌙</button>
+    </div>
+    <div class="container">
+        <h1>关于人物配置</h1>
+        <p class="lead">通过「伴侣配置」自定义你的 AI 伴侣，让 TA 成为独一无二的存在。</p>
+
+        <h2>配置项说明</h2>
+        <ul>
+            <li><b>名字</b>：给 TA 起一个名字，AI 会以这个名字作为身份设定。</li>
+            <li><b>性别</b>：选择「男生」或「女生」。</li>
+            <li><b>声音模型</b>：选择 TA 说话的音色（EdgeTTS），详见下方列表。</li>
+            <li><b>描述</b>：用文字描述 TA 的性格、身份、爱好等，例如「温柔体贴、喜欢阅读」。</li>
+        </ul>
+
+        <h2>保存与生效</h2>
+        <p>填写完成后点击 <b>「返回」</b>，在弹窗中确认保存即可。保存后，新的设定会立即应用到后续对话中。</p>
+
+        <div class="tip">
+            <strong>提示：</strong>若提示「还有空余选项未填」，请检查是否有必填项为空；若提示「你选择的声音模型不可使用」，请从下拉列表中选择有效的声音。
+        </div>
+
+        <h2>声音模型一览</h2>
+        <table>
+            <thead>
+                <tr><th>模型名</th><th>音色</th><th>性别</th><th>特点</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>zh-CN-XiaoxiaoNeural</code></td><td>晓晓</td><td>女</td><td>普通话</td></tr>
+                <tr><td><code>zh-CN-XiaoyiNeural</code></td><td>晓伊</td><td>女</td><td>普通话</td></tr>
+                <tr><td><code>zh-CN-YunjianNeural</code></td><td>云健</td><td>男</td><td>普通话</td></tr>
+                <tr><td><code>zh-CN-YunxiNeural</code></td><td>云汐</td><td>男</td><td>普通话</td></tr>
+                <tr><td><code>zh-CN-YunxiaNeural</code></td><td>云夏</td><td>男</td><td>普通话</td></tr>
+                <tr><td><code>zh-CN-XiaohanNeural</code></td><td>晓涵</td><td>女</td><td>普通话（温暖）</td></tr>
+                <tr><td><code>zh-CN-XiaomengNeural</code></td><td>晓梦</td><td>女</td><td>普通话（活泼）</td></tr>
+                <tr><td><code>zh-CN-XiaomoNeural</code></td><td>晓墨</td><td>女</td><td>普通话（亲和）</td></tr>
+                <tr><td><code>zh-CN-XiaoranNeural</code></td><td>晓然</td><td>女</td><td>普通话（自然）</td></tr>
+                <tr><td><code>zh-CN-XiaoruiNeural</code></td><td>晓睿</td><td>女</td><td>普通话（成熟）</td></tr>
+                <tr><td><code>zh-CN-XiaoshuangNeural</code></td><td>晓双</td><td>女</td><td>普通话（青少年）</td></tr>
+                <tr><td><code>zh-CN-XiaoxuanNeural</code></td><td>晓萱</td><td>女</td><td>普通话（自信）</td></tr>
+                <tr><td><code>zh-CN-XiaoyouNeural</code></td><td>晓悠</td><td>女</td><td>普通话（儿童）</td></tr>
+                <tr><td><code>zh-CN-YunyangNeural</code></td><td>云扬</td><td>男</td><td>普通话（新闻）</td></tr>
+                <tr><td><code>zh-CN-YunyeNeural</code></td><td>云野</td><td>男</td><td>普通话（优雅）</td></tr>
+                <tr><td><code>zh-CN-YunzeNeural</code></td><td>云泽</td><td>男</td><td>普通话（自信）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const body = document.body;
+        const toggleBtn = document.getElementById('toggleBtn');
+        let isDark = localStorage.getItem('theme') === 'dark';
+        function setTheme(){
+            if(isDark){ body.classList.add('dark'); toggleBtn.textContent = '☀️'; }
+            else { body.classList.remove('dark'); toggleBtn.textContent = '🌙'; }
+        }
+        setTheme();
+        toggleBtn.addEventListener('click', () => {
+            isDark = !isDark;
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            setTheme();
+        });
+    </script>
+</body>
+</html>

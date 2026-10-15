@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于其他 · PyAI</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,"Microsoft YaHei","Segoe UI",sans-serif;transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s}
+        :root{--bg-page:#f7f8fa;--bg-card:#ffffff;--text-title:#202938;--text-desc:#6b7280;--text-normal:#333;--border:#e5e7eb;--link:#3b7ddd;--hover:#f0f6ff;--code:#f4f5f7;--thead:#f0f6ff;--shadow:0 2px 12px rgba(0,0,0,.06);--tip:#fff7ed;--tip-border:#fdba74}
+        .dark{--bg-page:#17181c;--bg-card:#222429;--text-title:#f1f3f7;--text-desc:#a1a5ad;--text-normal:#e5e7eb;--border:#383a42;--link:#79b8ff;--hover:#2b3444;--code:#2b2f36;--thead:#2b3444;--shadow:0 2px 12px rgba(0,0,0,.3);--tip:#2b2418;--tip-border:#8a5a2b}
+        body{background:var(--bg-page);color:var(--text-normal);min-height:100vh;padding:20px 16px 60px}
+        .topbar{max-width:860px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between}
+        .back{color:var(--link);text-decoration:none;font-size:14px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);box-shadow:var(--shadow)}
+        .back:hover{background:var(--hover)}
+        .theme-toggle{border:1px solid var(--border);background:var(--bg-card);color:var(--text-normal);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:var(--shadow)}
+        .container{max-width:860px;margin:0 auto;background:var(--bg-card);padding:40px 48px;border-radius:14px;box-shadow:var(--shadow)}
+        h1{font-size:28px;color:var(--text-title);margin-bottom:8px;font-weight:700}
+        .lead{color:var(--text-desc);font-size:15px;margin-bottom:24px;line-height:1.7}
+        h2{font-size:21px;color:var(--text-title);margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+        h3{font-size:17px;color:var(--text-title);margin:18px 0 6px}
+        p{line-height:1.8;margin:8px 0}
+        ul,ol{line-height:1.8;margin:8px 0 8px 22px}
+        li{margin:5px 0}
+        code{background:var(--code);padding:2px 6px;border-radius:5px;font-family:Consolas,Monaco,"Courier New",monospace;font-size:13px}
+        table{width:100%;border-collapse:collapse;margin:12px 0}
+        th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;font-size:14px}
+        th{background:var(--thead);color:var(--text-title);font-weight:600}
+        tr:nth-child(even) td{background:var(--hover)}
+        .faq{border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:10px 0}
+        .faq b{color:var(--link);display:block;margin-bottom:4px}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="back" href="index.html">← 返回</a>
+        <button class="theme-toggle" id="toggleBtn">🌙</button>
+    </div>
+    <div class="container">
+        <h1>关于其他</h1>
+        <p class="lead">界面说明、快捷键、数据隐私与常见问题解答。</p>
+
+        <h2>界面总览</h2>
+        <p>主界面分为左右两栏：</p>
+        <ul>
+            <li><b>配置栏</b>（左侧）：包含「关于 / 帮助 / 设置 / 伴侣配置」四个入口；</li>
+            <li><b>对话区</b>（右侧）：上方是动作按钮（摸摸头 / 抱一抱 / 保存对话），中间是聊天记录，下方是消息输入框与「发送」按钮。</li>
+        </ul>
+
+        <h2>快捷键</h2>
+        <table>
+            <thead><tr><th>快捷键</th><th>功能</th></tr></thead>
+            <tbody>
+                <tr><td><code>Enter</code></td><td>发送消息</td></tr>
+                <tr><td><code>Ctrl + S</code></td><td>保存对话（触发记忆分析）</td></tr>
+            </tbody>
+        </table>
+
+        <h2>数据与隐私</h2>
+        <p>程序所有数据均保存在本地，不会上传给程序作者以外的第三方（对话内容会按需发送至 DeepSeek API 用于生成回复）。</p>
+        <ul>
+            <li><b>API Key</b>：使用 AES-256-GCM 加密，密钥存于系统钥匙串，密文存于 <code>data/settings.db</code>；</li>
+            <li><b>数据文件</b>：<code>data/dialogs.db</code>（聊天记录与记忆）、<code>data/system.db</code>（运行时/系统设置）、<code>data/settings.db</code>（用户设置与密钥信息）；</li>
+            <li><b>日志</b>：保存在 <code>log/</code> 目录，便于排查问题。</li>
+        </ul>
+
+        <h2>常见问题（FAQ）</h2>
+        <div class="faq"><b>Q：启动提示「您还未配置 API」？</b>进入「设置」填入 API-KEY 并保存，详见「关于 API-KEY」。</div>
+        <div class="faq"><b>Q：启动提示「您还未配置伴侣」？</b>进入「伴侣配置」完成名字、性别等设置，详见「关于人物配置」。</div>
+        <div class="faq"><b>Q：发送消息后提示「请求时发生错误」？</b>请检查 API-KEY 是否有效、网络是否通畅、账户是否有余额，并查看 <code>log/</code> 下日志定位原因。</div>
+        <div class="faq"><b>Q：保存对话提示「还没有新的对话记录」？</b>当前没有未保存的新对话，先聊天再保存即可。</div>
+        <div class="faq"><b>Q：保存对话提示「你还没有配置过伴侣」？</b>先完成「伴侣配置」再使用保存功能。</div>
+        <div class="faq"><b>Q：启动提示「有所需文件缺失」？</b>请确认程序目录完整（<code>config.json</code>、<code>analysis_config</code>、<code>img/</code>、<code>docs/HelpIndex.html</code> 等），或重新解压安装。</div>
+
+        <h2>日志与排查</h2>
+        <p>程序支持通过命令行参数调整日志级别：</p>
+        <pre><code>python pyai.py -l DEBUG</code></pre>
+        <p>可选级别：<code>DEBUG</code>（最详细）、<code>INFO</code>（默认）、<code>WARNING</code>、<code>ERROR</code>。日志按模块命名（如 <code>api.log</code>、<code>ui.log</code> 等），保存于 <code>log/</code> 目录。</p>
+    </div>
+
+    <script>
+        const body = document.body;
+        const toggleBtn = document.getElementById('toggleBtn');
+        let isDark = localStorage.getItem('theme') === 'dark';
+        function setTheme(){
+            if(isDark){ body.classList.add('dark'); toggleBtn.textContent = '☀️'; }
+            else { body.classList.remove('dark'); toggleBtn.textContent = '🌙'; }
+        }
+        setTheme();
+        toggleBtn.addEventListener('click', () => {
+            isDark = !isDark;
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            setTheme();
+        });
+    </script>
+</body>
+</html>
