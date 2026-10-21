@@ -329,7 +329,7 @@ class Ui:
             text_color = colors_frame['chat_text']
             self.cache['dialogs-generator'] = self.get_dialogs()
             def flush(event) -> None:
-                if event.delta:
+                if event.delta > 0:
                     top = scr_text.yview()[0]
                     if top == 0.0:
                         scr_text.config(state='normal')
@@ -343,6 +343,7 @@ class Ui:
                                 scr_text.insert(4.0, '\n', r'\n')
                         except StopIteration:
                             self.ui_logger.info('No dialogs can show')
+                        scr_text.see(20.0)
                 scr_text.config(state='disabled')
 
             scr_text = scrolledtext.ScrolledText(chat_frame,

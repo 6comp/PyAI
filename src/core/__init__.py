@@ -103,8 +103,8 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
                   r'img\PyAI-IMG(black)(normal).png',
                   r'img\PyAI-IMG(white)(normal).png',
                   r'docs\HelpIndex.html')
-    is_existence = (path.isfile(p) for p in file_paths)
-    if not is_existence:
+    is_existence = (os.path.isfile(p) for p in file_paths)
+    if not all(is_existence):
         super().show_warn('error', '错误', '有所需文件缺失')
         raise SystemExit('Some required file are missing!')
 
@@ -115,8 +115,8 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
 
     # 文件夹创建
     if not all((
-             path.exists('log'),
-             path.exists('data')
+             os.path.exists('log'),
+             os.path.exists('data')
              )):
         for folder in ('log','data'):
             os.mkdir(folder)
@@ -145,7 +145,7 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         super(_ThreadManager, self).__init__()
         super(datamanage.DataManager, self).__init__()
         super(api.Api, self).__init__()
-        super(ui.Ui, self).__init__('zh-CN-XiaoyiNeural')
+        super(ui.Ui, self).__init__()
 
 
         self.logger.info('Init PyAI')
@@ -190,5 +190,4 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
 
 
 def main() -> None:
-    app = PyAI()
-    app.pyai()
+    PyAI().pyai()

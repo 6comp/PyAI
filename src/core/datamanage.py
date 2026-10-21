@@ -178,7 +178,7 @@ class DataManager:
 
 
 
-    def get_dialogs(self) -> tp.Generator|None:
+    def get_dialogs(self) -> tp.Generator:
         """
         获取聊天记录（生成器）
         :return: Generator
@@ -244,7 +244,7 @@ class DataManager:
 
         with sqlite3.connect(self.db_paths['dialog']) as connection:
             cursor = connection.cursor()
-            if not data_index:
+            if data_index is None:
                 index = cursor.execute(r'SELECT id FROM info').fetchall()
                 self.data_logger.debug(index)
                 if index:
@@ -256,8 +256,11 @@ class DataManager:
             else:
                 end_index = data_index
             cursor.execute('SELECT info FROM info WHERE id=?', (end_index,))
-            data = cursor.fetchone()[0]
-            data = base64.b64decode(data.encode('UTF-8')).decode('UTF-8')
+            data = cursor.fetchone()
+            if not data:
+                self.data_logger.warning('User has not saved any related data')
+                return None
+            data = base64.b64decode(data[0].encode('UTF-8')).decode('UTF-8')
             self.data_logger.debug(data)
 
             self.data_logger.info('Get info ended')
@@ -405,6 +408,7 @@ class DataManager:
                 index = cursor.fetchall()
                 index = index[-1][0]+1 if index else 0
                 cursor.execute('INSERT INTO setting(id,name,"value") VALUES (?,?,?)',(index, key, value))
+            connection.commit()
         self.data_logger.info('Setting ended')
 
 
@@ -444,6 +448,7 @@ class DataManager:
         with sqlite3.connect(self.db_paths['setting']) as connection:
             cursor = connection.cursor()
             cursor.execute('DELETE FROM secret')                        # 删除 iv 和密文
+            connection.commit()
             self.data_logger.debug('Deleted IV and secret data')
 
         self.data_logger.info('Destroyed the secret')
@@ -473,7 +478,7 @@ class DataManager:
         with sqlite3.connect(self.db_paths['setting']) as connection:
             cursor = connection.cursor()
             cursor.execute('DELETE FROM setting')
-            cursor.execute('DELETE FROM runtime')
+            connection.commit()
 
         self.data_logger.info('Destroyed the settings')
 

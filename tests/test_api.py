@@ -5,20 +5,16 @@
 测试 api 模块
 """
 
-# 测试导入
-import os
+# 导入
 import logging
-import dotenv
 import pytest
-import src.core.api as api
+from src.core import api
 
-
-dotenv.load_dotenv('.env.local')
 
 
 @ pytest.fixture
-def logger():
-    def _return(name):
+def self():
+    def log(name):
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s - {%(lineno)d}')
@@ -27,23 +23,89 @@ def logger():
         stream.setFormatter(formatter)
         logger.addHandler(stream)
         return logger
-    return _return
+    api.init(log)
+
+    s = api.Api
+    class test_post:
+        def __init__(self, *args, **kwargs):
+            self.encoding = 'UTF-8'
+            self.status_code = 200
+            self.headers = {'EXAMPLE-HEADER':'EXAMPLE HEADER CONTENT'}
+            self.cookies = 'TESTING COOKIES CONTENT'
+            self.text = '''{"choices":
+                             [
+                                 {
+                                     "finish_reason":"stop",
+                                     "message":{"content":"THIS IS A PIECE OF CONTENT"}
+                                  }
+                             ]
+                         }'''
+            self.ok = True
+    setattr(api.requests, 'post', test_post)
+
+    return s()
 
 
-@ pytest.fixture(autouse=True)
-def api_self(logger):
-    test_key = os.getenv("APIKYE")
-    if test_key is None:
-        raise Exception("API key not set")
-    api.init(logger)
-    test_msg = []
-    test_setting = '你是一个幽默的 AI 助手，善于帮助用户解答疑问'
-    return api.Api(test_setting, test_msg, test_key)
+
+def test_chat(self):
+    """
+    测试交流功能
+    :param self: 类对象
+    :return: None
+    """
+    key, content, info = \
+        'TEST API SECRET', 'TEST CONTENT', {"对话者相关属性":{"0":{"姓名":"TEST-NAME","性别":"MALE","性格":"EXAMPLE","补充":"EXAMPLE"},"1":{"姓名":"TEST-NAME","性别":"FEMALE","性格":"EXAMPLE","补充":"EXAMPLE"}},"相关记忆":['THIS IS THE FIRST EXAMPLE MEMORY', 'THIS IS A SECOND EXAMPLE MEMORY'],"正在进行的对话":{"0":"HELLO","1":"YOU FINE TOO"}}
+    for func, arg in ((self.add_api, key), (self.add_info, info)):
+        assert not self.chat(content)
+        func(arg)
+    assert self.chat(content)
 
 
-def test_api_chat(api_self):
-    assert api_self.chat('你好啊') is not None
+
+def test_add_info(self):
+    """
+    测试添加信息功能
+    :param self: 类对象
+    :return: None
+    """
+    info = {"对话者相关属性":{"0":{"姓名":"TEST-NAME","性别":"MALE","性格":"EXAMPLE","补充":"EXAMPLE"},"1":{"姓名":"TEST-NAME","性别":"FEMALE","性格":"EXAMPLE","补充":"EXAMPLE"}},"相关记忆":['THIS IS THE FIRST EXAMPLE MEMORY', 'THIS IS A SECOND EXAMPLE MEMORY'],"正在进行的对话":{"0":"HELLO","1":"YOU FINE TOO"}}
+    self.add_info(info)
+    ai_about = info['对话者相关属性']['0']
+    ai_name = ai_about['姓名']
+    user_about = info['对话者相关属性']['1']
+    user_name = user_about['姓名']
+    ai_setting = f'''
+名字：{ai_name}
+相关属性：{ai_about}
+TA的名字：{user_name}
+TA的属性：{user_about}
+相关记忆：{info['相关记忆']}
+        '''
+    message = self.get_messages()
+    assert ai_setting == message[0]['content']
+    assert message[1:] == [{'content':'HELLO', 'role':'assistant'},{'content':'YOU FINE TOO', 'role':'user'}]
 
 
-def test_api_analysis_dialog(api_self):
-    assert api_self.analysis_dialog(('借钱王','111 兄弟可有碎银几两', '2026.1.1'),('铜钱捞石','滚滚滚！', '2026.1.1')) is not None
+
+def test_ana_dialogs(self):
+    """
+    测试分析方法
+    :param self: 类对象
+    :return: None
+    """
+    message = self.get_messages()
+    analysis = self.analysis_dialog(('EXAMPLE CONTENT','EXAMPLE CONTENT', 'EXAMPLE DATE'))
+    assert analysis[0] == 'THIS IS A PIECE OF CONTENT'
+    assert message == self.get_messages()
+
+
+
+def test_request_to(self):
+    """
+    测试请求方法
+    :param self: 类对象
+    :return: None
+    """
+    payload = 'THIS IS A EXAMPLE PAYLOAD'
+    answer = self._request(payload)
+    assert answer[0] == 'THIS IS A PIECE OF CONTENT'

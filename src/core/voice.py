@@ -33,7 +33,7 @@ class Voice:
     语音合成
     """
 
-    def __init__(self, voice:str, timeout:int=15) -> None:
+    def __init__(self, voice:str='zh-CN-XiaoyiNeural', timeout:int=15) -> None:
         """
         Initiate voice
         """

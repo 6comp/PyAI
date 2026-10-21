@@ -1,16 +1,20 @@
 # coding=UTF-8
 
+"""
+@file: test_datamanage.py
+测试 datamanage 模块
+"""
+
+
 # 导入
 import pytest
 import logging
-import sqlite3
-import keyring
-from core import datamanage
+from src.core import datamanage
 
 
 
 @ pytest.fixture
-def get_self():
+def manager(tmp_path):
     def _return(name):
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
@@ -21,52 +25,86 @@ def get_self():
         logger.addHandler(stream)
         return logger
     datamanage.init(_return)
-    manager = datamanage.DataManager()
-    return manager
+
+    manager = datamanage.DataManager
+    path = {
+        'dialog':fr'{tmp_path}\dialogs.db',
+        'system':fr'{tmp_path}\system.db',
+        'setting':fr'{tmp_path}\settings.db'
+            }
+    setattr(manager, 'config', {'db_config':{'path':path}})
+    class test_keyring:                                     # 用于测试的伪 keyring 模块
+        keyring:dict = {}
+        @classmethod
+        def set_password(cls, username='', key='', value=''):cls.keyring[key] = value
+        @classmethod
+        def get_password(cls, service='', key=''):
+            if key not in cls.keyring:return None
+            return cls.keyring[key]
+        @classmethod
+        def delete_password(cls, service='', key=''):del cls.keyring[key]
+    setattr(datamanage, 'keyring', test_keyring)
+
+    return manager()
 
 
-def test_save_dialogs(get_self):
-    get_self.save_dialogs(('a','A','0000.0.0'),('b','B','0000.0.0'))
-    with sqlite3.connect('data\\dialogs.db') as conn:
-        cursor = conn.cursor()
-        end_index = cursor.execute('SELECT id FROM dialogs').fetchall()[-1][0]
-        result = cursor.execute('SELECT * FROM dialogs WHERE id=?',(end_index,)).fetchone()
-        assert result
+
+def test_sg_dialogs(manager):
+    """
+    测试保存和获取对话记录方法
+    :param manager: 类对象
+    :return: None
+    """
+    test_dialogs = ('test-name1','Hello!','1949.10.1'),('test-name2', 'Hi! It is a good day!', '1949.10.1')
+    manager.save_dialogs(*test_dialogs)
+    generator = manager.get_dialogs()
+    assert tuple(generator) == test_dialogs[-1::-1]
 
 
-def test_save_info(get_self):
-    get_self.save_info('聪明人，但不聪明','傻子，纯傻子')
-    with sqlite3.connect('data\\dialogs.db') as conn:
-        cursor = conn.cursor()
-        index = cursor.execute('SELECT id FROM info').fetchall()[-1]
-    assert cursor.execute('select * from info WHERE id=?',(index[0],)).fetchone()
+
+def test_sg_info(manager):
+    """
+    测试保存和获取相关信息
+    :param manager: 类对象
+    :return: None
+    """
+    info = "THIS IS A TESTING CONTENT"
+    manager.save_info(info)
+    assert manager.get_info() == info
+    assert manager.get_info(0) == info
 
 
-def test__get_aeskey(get_self):
-    assert get_self._get_aeskey()
-    with sqlite3.connect('data\\settings.db') as conn:
-        cursor = conn.cursor()
-        secret_data = cursor.execute('SELECT * FROM secret WHERE key=?',('API-KEY',)).fetchone()
-        secret_iv = cursor.execute('SELECT * FROM secret WHERE key=?',('AES-IV',)).fetchone()
-        assert secret_data, secret_iv
+
+def test_sg_api(manager):
+    """
+    测试保存获取密钥
+    :param manager: 类对象
+    :return: None
+    """
+    api = 'THIS IS A TESTING SECRET'
+    manager.set_api(api)
+    assert manager.get_api() == api
 
 
-def test__destroyed_secret(get_self):
-    get_self._destroyed_secret()
-    assert keyring.get_password(datamanage.NAME, datamanage.AES_API) is None
-    with sqlite3.connect('data\\settings.db') as conn:
-        cursor = conn.cursor()
-        assert not cursor.execute('SELECT * FROM secret').fetchall()
+
+def test_ug_setting(manager):
+    """
+    测试更新获取设置
+    :param manager: 类对象
+    :return: None
+    """
+    setting = name, value = 'TEST-NAME', 'TEST-VALUE'
+    for _ in range(2):
+        manager.update_setting(*setting, False)
+        manager.update_setting(*setting, True)
+        assert manager.get_setting(name) == value
+        assert manager.get_setting(name, True) == value
 
 
-def test_set_api(get_self):
-    get_self.set_api('原神牛逼666')
-    with sqlite3.connect('data\\settings.db') as conn:
-        cursor = conn.cursor()
-        secret = cursor.execute('SELECT * FROM secret WHERE key=?',('API-KEY',)).fetchone()
-        assert secret
 
-
-def test_get_api(get_self):
-    api = get_self.get_api()
-    assert api
+def test_destroyed(manager):
+    manager.destroyed('all')
+    assert not tuple(manager.get_dialogs())
+    assert not manager.get_info()
+    assert not manager.get_api()
+    assert not manager.get_setting('TEST-NAME')

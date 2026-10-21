@@ -32,7 +32,7 @@
 
 - #### Source Code Directory:
 ```text
-\PyAI\src\
+PyAI\src\
 |   analysis_config
 |   config.json
 |   pyai.py
@@ -73,12 +73,12 @@
 
 - #### Test Code Directory
 ```text
-\PyAI\tests\
-|   test_api.py
-|   test_datamanage.py
-|   test_init.py
-|   test_tools.py
-|   test_ui.py
+PyAI\tests\
+   test_api.py
+   test_datamanage.py
+   test_init.py
+   test_tools.py
+   test_ui.py
 ```
 
 <br>
@@ -108,7 +108,7 @@ or
 pip install -r requirements.txt
 ```
 ###### It is recommended to create a Python virtual environment first
-###### First change to the src\ directory, then run:
+###### First change to the PyAI\ directory, then run:
 ```shell
 python -m venv .venv    # Create a virtual environment
 
@@ -126,14 +126,6 @@ or
 ```shell
 python -m core
 ```
-
-<br>
-
-#### Configure the API for testing
-1. Create a .env file in the src folder
-2. Fill in: APIKEY=<your-key> (replace <your-key> with your API-KEY)
-
-**Note: remember to change to the src directory; please install pytest by yourself**
 
 <br>
 
@@ -173,8 +165,7 @@ python pyai.py --log-level DEBUG  # Enable the lowest log level (most detailed)
 
 ## Testing
 This mainly uses the code under the tests directory <br>
-Please set the src\ directory as the working directory before use <br>
-Remember to configure .env first before use
+**Please set the src\ directory as the working directory before use <br>**
 
 ### Run tests
 ```shell

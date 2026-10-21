@@ -74,7 +74,7 @@ class Api:
 
         self.api_logger = api_logger                                            # 日志记录器
         with open('analysis_config', encoding='UTF-8') as f:
-            self.ana_setting = f.read().replace('\n', ' ')
+            self.ana_setting = f.read()
         #
         # api_key = self.get_api()
         # if api_key is None:
@@ -118,9 +118,9 @@ class Api:
             "stop": None,                   # 一个 string 或最多包含 16 个 string 的 list，在遇到这些词时，API 停止生成更多的 token
             "stream": False,                # 是否使用流式输出（是 True 否 False）
             #"stream_options": None,        # 流式输出相关选项
-            "temperature": 0.35,            # 随机性（0<temperature<=2）
+            "temperature": 0.336,            # 随机性（0<temperature<=2）
             # "top_p": 1,                   # temperature 的替代方案（不建议一起设置）
-            #"tools": None,
+            #"tools": None,                 # 工具，未来会添加拓展功能
             #"tool_choice": None,
             # "logprobs": False,
             # "top_logprobs": None
@@ -235,8 +235,8 @@ TA的属性：{user_about}
                 js = json.loads(response.text)['choices'][0]
                 response_time = time.strftime('%Y.%m.%d-%H:%M:%S(%A)', time.localtime())
 
-                if js['finish_reason'] != 'stop':                       # 判断模型生成是否正常
-                    self.api_logger.error(f'AI answer error {js['finish_reason']}')
+                if (is_normal:=js['finish_reason']) != 'stop':                       # 判断模型生成是否正常
+                    self.api_logger.error(f'AI answer error {is_normal}')
                     return None
 
                 return js['message']['content'], response_time
@@ -305,7 +305,6 @@ TA的属性：{user_about}
         self.payload['messages'] = self.messages
 
         if analysis:
-            analysis[0].removeprefix('```json').removesuffix('```')
             return analysis
 
         self.api_logger.debug('No')

@@ -31,7 +31,7 @@
 
 - #### 源代码目录：
 ```text
-\PyAI\src\
+PyAI\src\
 |   analysis_config
 |   config.json
 |   pyai.py
@@ -72,12 +72,12 @@
 
 - #### 测试代码目录
 ```text
-\PyAI\tests\
-|   test_api.py
-|   test_datamanage.py
-|   test_init.py
-|   test_tools.py
-|   test_ui.py
+PyAI\tests\
+   test_api.py
+   test_datamanage.py
+   test_init.py
+   test_tools.py
+   test_ui.py
 ```
 
 <br>
@@ -107,7 +107,7 @@ pip install -e .
 pip install -r requirements.txt
 ```
 ###### 建议先创建 Python 虚拟环境
-###### 先转到 src\ 目录下，然后执行：
+###### 先转到 PyAI\ 目录下，然后执行：
 ```shell
 python -m venv .venv    # 创建虚拟环境
 
@@ -125,14 +125,6 @@ python pyai.py
 ```shell
 python -m core
 ```
-
-<br>
-
-#### 测试 API 的配置
-1. 在 src 文件夹下创建一个 .env 文件
-2. 填入：APIKEY=<your-key>（将 <your-key> 替换成你的 API-KEY）
-
-**注意：记得转到 src 目录下；pytest 请自行安装**
 
 <br>
 
@@ -172,8 +164,7 @@ python pyai.py --log-level DEBUG  # 启用最低日志等级，最详细
 
 ## 测试
 这个主要是使用 tests 目录下的代码 <br>
-请设置 src\ 目录为工作目录后使用 <br>
-记得先配置 .env 后使用
+**请设置 src\ 目录为工作目录后使用<br>**
 
 ### 执行测试
 ```shell
