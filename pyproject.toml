@@ -1,6 +1,6 @@
 # 构建依赖 bulid dependtions
 [bulid-system]
-requires = ['requests','python-dotenv','edge-tts','keyring','cryptography']
+requires = ['requests','just_playback','edge-tts','keyring','cryptography']
 build-backend = "setuptools.build_meta"
 
 
@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 name = "PyAI"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ['requests','python-dotenv','edge-tts','keyring','cryptography']
+dependencies = ['requests','just_playback','edge-tts','keyring','cryptography']
 readme = 'README.md'
 authors = [{"name"="6comp","email"="3950264691@qq.com"}]
 

@@ -251,9 +251,181 @@
               "bg": "#FFF0F5"
           }
         }
+      },
+      "dark": {
+        "home": {
+          "bg": "#1F1B18",
+          "highlightcolor": "#D18CA3",
+          "highlightbackground": "#4A3B33",
+          "config_frame": {
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33",
+            "about_button": {
+              "bg": "#4A3B33",
+              "activebackground": "#B76E79",
+              "activeforeground": "#1F1B18"
+            },
+            "help_button": {
+              "bg": "#4A3B33",
+              "activebackground": "#B76E79",
+              "activeforeground": "#1F1B18"
+            },
+            "setting_button": {
+              "bg": "#4A3B33",
+              "activebackground": "#B76E79",
+              "activeforeground": "#1F1B18"
+            },
+            "character_setting_button": {
+              "bg": "#4A3B33",
+              "activebackground": "#B76E79",
+              "activeforeground": "#1F1B18"
+            }
+          },
+          "chat_frame": {
+            "bg": "#2B2226",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33",
+            "action_frame": {
+              "bg": "#2B2226",
+              "highlightcolor": "#D18CA3",
+              "highlightbackground": "#4A3B33",
+              "head_touch_button": {
+                "bg": "#4A3B33",
+                "activebackground": "#B76E79",
+                "activeforeground": "#1F1B18"
+              },
+              "hug_button": {
+                "bg": "#4A3B33",
+                "activebackground": "#B76E79",
+                "activeforeground": "#1F1B18"
+              },
+              "save_button": {
+                "bg": "#8A5A68",
+                "activebackground": "#C9A0AE",
+                "activeforeground": "#1F1B18"
+              }
+            },
+            "chat_text": {
+              "bg": "#33272C",
+              "fg": "#EDDCD2",
+              "selectbackground": "#4A6355",
+              "tag_ai": "#6E5566",
+              "tag_user": "#7A5F3F"
+            },
+            "insert_frame": {
+              "bg": "#2B2226",
+              "highlightcolor": "#D18CA3",
+              "highlightbackground": "#4A3B33",
+              "insert_entry": {
+                "bg": "#33272C",
+                "disabledbackground": "#2B2226",
+                "highlightcolor": "#D18CA3",
+                "highlightbackground": "#4A3B33"
+              },
+              "send_button": {
+                "bg": "#8A5A68",
+                "activebackground": "#C9A0AE",
+                "activeforeground": "#1F1B18"
+              }
+            }
+          }
+        },
+        "about": {
+          "bg": "#1F1B18",
+          "highlightcolor": "#D18CA3",
+          "highlightbackground": "#4A3B33",
+          "text_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "back_button": {
+            "bg": "#4A3B33",
+            "activebackground": "#B76E79",
+            "activeforeground": "#1F1B18"
+          }
+        },
+        "setting": {
+          "bg": "#1F1B18",
+          "highlightcolor": "#D18CA3",
+          "highlightbackground": "#4A3B33",
+          "back_button": {
+            "bg": "#2B2226",
+            "activebackground": "#B76E79",
+            "activeforeground": "#1F1B18"
+          },
+          "api_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "api_entry": {
+            "bg": "#33272C",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "mode_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "mode_radiobutton": {
+            "bg": "#1F1B18"
+          }
+        },
+        "character_settings": {
+          "bg": "#1F1B18",
+          "highlightcolor": "#D18CA3",
+          "highlightbackground": "#4A3B33",
+          "back_button": {
+            "bg": "#2B2226",
+            "activebackground": "#B76E79",
+            "activeforeground": "#1F1B18"
+          },
+          "name_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "name_entry": {
+            "bg": "#33272C",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "gender_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "gender_radiobutton": {
+            "bg": "#1F1B18"
+          },
+          "voice_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "voice_combobox": {
+            "bg": "#33272C"
+          },
+          "introduction_label": {
+            "fg": "#EDDCD2",
+            "bg": "#1F1B18",
+            "highlightcolor": "#D18CA3",
+            "highlightbackground": "#4A3B33"
+          },
+          "insertor_text": {
+            "bg": "#33272C"
+          }
+        }
       }
     }
-
   }
-
 }

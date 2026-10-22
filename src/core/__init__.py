@@ -89,7 +89,7 @@ class _ThreadManager:
 
 
 
-class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
+class PyAI(_ThreadManager, datamanage.DataManager, api.Api, voice.Voice, ui.Ui):
     """
     PyAI
     """
@@ -145,7 +145,7 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, ui.Ui, voice.Voice):
         super(_ThreadManager, self).__init__()
         super(datamanage.DataManager, self).__init__()
         super(api.Api, self).__init__()
-        super(ui.Ui, self).__init__()
+        super(voice.Voice, self).__init__()
 
 
         self.logger.info('Init PyAI')

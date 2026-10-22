@@ -73,6 +73,9 @@ class Ui:
         else:
             self.show_warn('warning', '提示', '您还未配置伴侣，请先配置')
 
+        # 音频配置
+        self.voice_choice = 'zh-CN-XiaoyiNeural'
+
 
         self.ui_logger.info('Initiate have down (ui)')
 
@@ -229,6 +232,8 @@ class Ui:
             def chat_to(txt:str, text_control:scrolledtext.ScrolledText,
                         entry_control:tk.Entry, button_control:tk.Button) -> None:
                 if txt:
+                    self.stop()
+
                     entry_control.delete(0,'end')
                     entry_control.insert('end', '等待回复...')
                     entry_control.config(state='disabled')
@@ -241,9 +246,9 @@ class Ui:
                     result = self.chat(txt)
                     if result:
                         answer, date = result
-                        # read_content = re.sub(r'\(.*+\)', '，', answer)
-                        # self.ui_logger.debug(read_content)
-                        # self.say(read_content)
+                        read_content = re.sub(r'（.+）', '，', answer)
+                        self.ui_logger.debug(read_content)
+                        self.say(read_content)
                         text_control.config(state='normal')
                         text_control.insert('end', '\n', r'\n')
                         text_control.insert('end', answer+'\n', 'ai')

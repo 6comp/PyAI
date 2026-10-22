@@ -4,8 +4,11 @@
 @file: voice.py
 """
 
+
 # 模块导入
 import edge_tts as tts
+import just_playback as player
+
 
 __all__ = [
     'init',
@@ -33,7 +36,7 @@ class Voice:
     语音合成
     """
 
-    def __init__(self, voice:str='zh-CN-XiaoyiNeural', timeout:int=15) -> None:
+    def __init__(self, timeout:int=15) -> None:
         """
         Initiate voice
         """
@@ -41,25 +44,26 @@ class Voice:
         config = self.config['voice_config']
         self.cache_path = config['cache_path']
 
-        self.logger = voice_logger
-        self.v = voice
+        self.voice_logger = voice_logger
+        self.voice_choice = None
         self.timeout = timeout
-        self.logger.debug(f'{voice}, {timeout}')
-        self.logger.info('Initiate have down (voice)')
+        self.player_self:list[player.Playback] = []
+        self.voice_logger.debug(f'{self.voice_choice}, {timeout}')
+        self.voice_logger.info('Initiate have down (voice)')
 
 
 
-    def _request_tts(self, text:str) -> None:
+    def _rs_tts(self, text:str) -> None:
         """
         向 TTS 服务请求获取人声文件
         :param text: 转换文本
         :return: None
         """
-        self.logger.debug(text)
-        response = tts.Communicate(text, self.v,
+        self.voice_logger.debug(text)
+        response = tts.Communicate(text, self.voice_choice,
                                    connect_timeout=self.timeout, receive_timeout=self.timeout)
         response.save_sync(self.cache_path)
-        self.logger.info('Request to the TTS')
+        self.voice_logger.info('Requested to the TTS')
 
 
 
@@ -68,7 +72,22 @@ class Voice:
         播放保存的音频
         :return: None
         """
-        self.logger.info('Play the audio')
+        p = player.Playback(self.cache_path)
+        p.play()
+        self.player_self.append(p)
+        self.voice_logger.info('Play the audio')
+
+
+
+    def stop(self) -> None:
+        """
+        停止正在播放的音频
+        :return: None
+        """
+        for p in self.player_self:
+            p.stop(); p.close()
+        self.player_self.clear()
+        self.voice_logger.info('Stopped all playing event')
 
 
 
@@ -78,7 +97,7 @@ class Voice:
         :param text: 转换文本
         :return: None
         """
-        self.logger.info('Say')
-        self.logger.debug(text)
-        self._request_tts(text)
+        self.voice_logger.debug(text)
+        self._rs_tts(text)
         self._play()
+        self.voice_logger.info('Saied content')
