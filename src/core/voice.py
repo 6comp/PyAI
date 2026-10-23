@@ -53,11 +53,11 @@ class Voice:
 
 
 
-    def _rs_tts(self, text:str) -> None:
+    def _rs_tts(self, text:str) -> bool:
         """
         向 TTS 服务请求获取人声文件
         :param text: 转换文本
-        :return: None
+        :return: bool
         """
         if not self.voice_choice is None:
             self.voice_logger.debug(text)
@@ -67,8 +67,12 @@ class Voice:
                 response.save_sync(self.cache_path)
             except Exception as e:
                 self.voice_logger.error(f'TTS error :{e}')
-        self.voice_logger.warning('The voice choice is None')
+                return False
+        else:
+            self.voice_logger.warning('The voice choice is None')
+            return False
         self.voice_logger.info('Requested to the TTS')
+        return True
 
 
 
@@ -103,6 +107,7 @@ class Voice:
         :return: None
         """
         self.voice_logger.debug(text)
-        self._rs_tts(text)
-        self._play()
+        if self._rs_tts(text):
+            self._play()
+        else:self.voice_logger.warning('TTS Error so can\'t play voice')
         self.voice_logger.info('Saied content')

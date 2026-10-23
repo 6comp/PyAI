@@ -897,17 +897,7 @@ Hoping to bring you warmth and company.
             "zh-CN-YunjianNeural",
             "zh-CN-YunxiNeural",
             "zh-CN-YunxiaNeural",
-            "zh-CN-XiaohanNeural",
-            "zh-CN-XiaomengNeural",
-            "zh-CN-XiaomoNeural",
-            "zh-CN-XiaoranNeural",
-            "zh-CN-XiaoruiNeural",
-            "zh-CN-XiaoshuangNeural",
-            "zh-CN-XiaoxuanNeural",
-            "zh-CN-XiaoyouNeural",
-            "zh-CN-YunyangNeural",
-            "zh-CN-YunyeNeural",
-            "zh-CN-YunzeNeural"
+            "zh-CN-YunyangNeural"
         )
         voice_combobox = ttk.Combobox(voice_frame,
                                       name='voice_combobox',
