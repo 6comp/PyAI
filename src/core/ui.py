@@ -63,18 +63,18 @@ class Ui:
         # 之后要处理的对话（与 api 的对话内容相同）
         self.new_dialogs = []
 
-        # 添加 API 必要参数
+        # 添加 API 和必要参数
         if api:=self.get_api():
             self.add_api(api)
         else:
             self.show_warn('warning', '提示', '您还未配置 API，请先配置')
         if info:=self.get_info():
             self.add_info(json.loads(info))
+            self.voice_choice = self.get_setting('voice')                # 音频配置
         else:
             self.show_warn('warning', '提示', '您还未配置伴侣，请先配置')
 
-        # 音频配置
-        self.voice_choice = 'zh-CN-XiaoyiNeural'
+
 
 
         self.ui_logger.info('Initiate have down (ui)')
@@ -136,6 +136,7 @@ class Ui:
         y = (self.main_tk.winfo_screenheight()-550) // 2
         self.main_tk.geometry(f'800x550+{x}+{y}')
         self.main_tk.resizable(False, False)
+        self.main_tk.protocol('WM_DELETE_WINDOW', self.exit)
 
         self.style = ttk.Style()
 
@@ -144,6 +145,20 @@ class Ui:
         self.ui_logger.info('build windows')
 
         self.main_tk.mainloop()
+
+
+
+    def exit(self) -> None:
+        """
+        退出时要执行的行为
+        :return: None
+        """
+        if self.new_dialogs:
+            answer = self.show_warn('question', '询问', '您未保存您的对话，是否退出？')
+            if not answer:return
+        self.stop()
+        self.main_tk.destroy()
+        self.ui_logger.info('Delete the window')
 
 
 
@@ -705,6 +720,7 @@ Hoping to bring you warmth and company.
                 self.show_warn('warning', '提示', '你选择的声音模型不可使用')
                 return None
             self.update_setting('voice', v)
+            self.voice_choice = v
             if all_info:
                 abouts = all_info['对话者相关属性']['0']
                 self.ui_logger.debug(abouts)

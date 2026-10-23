@@ -59,10 +59,15 @@ class Voice:
         :param text: 转换文本
         :return: None
         """
-        self.voice_logger.debug(text)
-        response = tts.Communicate(text, self.voice_choice,
-                                   connect_timeout=self.timeout, receive_timeout=self.timeout)
-        response.save_sync(self.cache_path)
+        if not self.voice_choice is None:
+            self.voice_logger.debug(text)
+            try:
+                response = tts.Communicate(text, self.voice_choice,
+                                           connect_timeout=self.timeout, receive_timeout=self.timeout)
+                response.save_sync(self.cache_path)
+            except Exception as e:
+                self.voice_logger.error(f'TTS error :{e}')
+        self.voice_logger.warning('The voice choice is None')
         self.voice_logger.info('Requested to the TTS')
 
 
