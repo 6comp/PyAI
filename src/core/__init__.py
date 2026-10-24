@@ -131,8 +131,11 @@ class PyAI(_ThreadManager, datamanage.DataManager, api.Api, voice.Voice, ui.Ui):
         a_parse.add_argument('-l', '--log-level',
                              default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
                              help='Set log level,default=info,choices:debug/info/warning/error')
+        a_parse.add_argument('--test', '-t', action='store_true',
+                             help='Whether to turn on the testing,input it will begin some testing function')
         args = a_parse.parse_args()
         self.logger_level = getattr(logging, args.log_level)
+        self.color_mode = 'dark' if args.test else 'light'
 
         self.logger = self.get_logger(__name__)
         self.logger.debug(self.config)

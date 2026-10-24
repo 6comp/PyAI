@@ -47,7 +47,7 @@ class Ui:
         self.ui_config = self.config['ui_config']
         self.language = self.ui_config['language']
         self.text_language = self.ui_config['text_language'][self.language]
-        self.color_mode = self.ui_config['colors']['mode']
+        # self.color_mode = self.ui_config['colors']['mode']
         self.colors = self.ui_config['colors'][self.color_mode]
 
         # 预定义
@@ -349,6 +349,7 @@ class Ui:
             text_color = colors_frame['chat_text']
             self.cache['dialogs-generator'] = self.get_dialogs()
             def flush(event) -> None:
+                self.ui_logger.debug(event.delta)
                 if event.delta > 0:
                     top = scr_text.yview()[0]
                     if top == 0.0:
@@ -427,6 +428,9 @@ class Ui:
             chat_frame.bind_all('<Return>', lambda e:self.add_task(self.ui_thread, chat_to,
                                                                    (insert_entry.get(), scr_text, insert_entry, button))
                                 )
+            e = tk.Event();e.delta=1
+            flush(e)
+            scr_text.see('end')
         self.ui_logger.info('Build the home page')
 
 
